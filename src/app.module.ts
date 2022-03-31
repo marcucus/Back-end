@@ -4,6 +4,11 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { SitesModule } from './sites/sites.module';
+import { Site } from './sites/entities/site.entity';
+import { KeywordsModule } from './keywords/keywords.module';
+import { Keyword } from './keywords/entities/keyword.entity';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,8 +21,12 @@ import { SitesModule } from './sites/sites.module';
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
       synchronize: true,
+      entities:[Site,Keyword],
     }),
     SitesModule,
+    KeywordsModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

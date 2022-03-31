@@ -1,25 +1,24 @@
+import { Keyword } from 'src/keywords/entities/keyword.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   EntityRepository,
   Repository,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
-export class Sites {
+export class Site {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   url: string;
 
-  @Column()
-  position: number;
-
-  @Column()
-  lastPosition: number;
+  @OneToMany(() => Keyword, (keyword) => keyword.site)
+  keywords: Keyword[]
 }
 
-@EntityRepository(Sites)
-export class SitesRepository extends Repository<Sites> {}
+@EntityRepository(Site)
+export class SitesRepository extends Repository<Site> {}
