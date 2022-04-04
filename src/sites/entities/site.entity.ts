@@ -1,4 +1,5 @@
 import { Keyword } from 'src/keywords/entities/keyword.entity';
+import { User } from 'src/users/entities/user.entity';
 import {
   Entity,
   Column,
@@ -6,6 +7,7 @@ import {
   EntityRepository,
   Repository,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -17,7 +19,7 @@ export class Site {
   url: string;
 
   @OneToMany(() => Keyword, (keyword) => keyword.site)
-  keywords: Keyword[]
+  keywords: Keyword[];
 }
 
 @EntityRepository(Site)

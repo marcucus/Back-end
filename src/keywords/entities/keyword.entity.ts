@@ -1,4 +1,5 @@
 import { Site } from "src/sites/entities/site.entity";
+import { User } from "src/users/entities/user.entity";
 import { 
     Column, 
     Entity, 
@@ -24,7 +25,8 @@ export class Keyword {
     lastPosition: number;
 
     @ManyToOne(() => Site, (site) => site.keywords)
-    site: Site
+    site: Site;
+
 }
 
 @EntityRepository(Keyword)

@@ -6,7 +6,8 @@ export class UsersService {
     private users:User[] = [
         {
         id:0,
-        name:'Adrien',
+        firstname:'Adrien',
+        lastname:'marques',
         email:'marqueslaw19@gmail.com',
         password:'marques77'
     }
