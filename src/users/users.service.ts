@@ -9,7 +9,9 @@ export class UsersService {
         firstname:'Adrien',
         lastname:'marques',
         email:'marqueslaw19@gmail.com',
-        password:'marques77'
+        password:'marques77',
+        createdAt:null,
+        updatedAt:null
     }
     ];
     
