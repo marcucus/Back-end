@@ -33,6 +33,7 @@
     "dotenv": "^16.0.0",
     "googleapis": "^100.0.0",
     "jsonwebtoken": "^8.5.1",
+    "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.0",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",

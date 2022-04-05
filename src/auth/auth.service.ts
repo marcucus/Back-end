@@ -16,6 +16,19 @@ export class AuthService {
       this.oauthClient = new google.auth.OAuth2(clientId, clientSecret);
     }
 
+    googleLogin(req) {
+      if (!req.user) {
+        return 'No user from google'
+      }
+      return {
+        message: 'User Info from Google',
+        user: req.user
+      }
+    }
+    hello() {
+      return "Hello"
+    }
+
     async loginGoogleUser(
       token:string,
       values: { userAgent: string; ipAddress: string },

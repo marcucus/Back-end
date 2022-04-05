@@ -1,14 +1,25 @@
-import { Body, Controller, Delete, HttpException, HttpStatus, Ip, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Ip, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import RefreshTokenDto from './dto/refresh-token.dto';
 import { LoginDto } from './dto/login.dto';
 import GoogleTokenDto from './dto/google-token.dto';
+import { AuthGuard } from '@nestjs/passport';
 
-@Controller('auth')
+@Controller('authentication')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('/google/login')
+  @Get()
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) { }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  googleAuthRedirect(@Req() req) {
+    return this.authService.googleLogin(req)
+  }
+/*
+  @Post('/google/callback')
   async googleLogin(
     @Body() body: GoogleTokenDto,
     @Req() req,
@@ -51,5 +62,5 @@ export class AuthController {
   // we need to create RefreshTokenDto
   async logout(@Body() body: RefreshTokenDto) {
     return this.authService.logout(body.refreshToken);
-  }
+  }*/
 }
