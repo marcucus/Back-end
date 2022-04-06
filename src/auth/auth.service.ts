@@ -1,30 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Redirect } from '@nestjs/common';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import RefreshToken from './entities/refresh-token.entity';
 import { sign, verify } from 'jsonwebtoken';
 import { Auth, google } from 'googleapis';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { IsNull } from 'typeorm';
 
 @Injectable()
 export class AuthService {
     private refreshTokens: RefreshToken[]= [];
     private oauthClient: Auth.OAuth2Client;
 
-    constructor(private readonly userService: UsersService) {
+    constructor(public userService: UsersService) {
       const clientId = process.env.GOOGLE_CLIENT_ID;
       const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
       this.oauthClient = new google.auth.OAuth2(clientId, clientSecret);
     }
 
-    googleLogin(req) {
-      if (!req.user) {
+    async googleLogin(req) {
+      if (!req.user){
         return 'No user from google'
       }
+      if (req.user){
+        const email = req.user.email;
+        const exist = await this.userService.findByEmail(email);
+        if(exist){
+          const newUser = new CreateUserDto();
+          newUser.firstname = req.user.firstName;
+          newUser.lastname = req.user.lastName;
+          newUser.email = req.user.email;
+          newUser.picture = req.user.picture;
+          await this.userService.create(newUser);
+          console.log(exist);
+        }
       return {
         message: 'User Info from Google',
-        user: req.user
+        user: req.user,
+        }
       }
     }
+
     hello() {
       return "Hello"
     }
@@ -80,19 +96,9 @@ export class AuthService {
 
     async login(
         email: string,
-        password: string,
         values: { userAgent: string; ipAddress: string },
       ): Promise<{ accessToken: string; refreshToken: string } | undefined> {
-        // need to import userService
         const user = await this.userService.findByEmail(email);
-        if (!user) {
-          return undefined;
-        }
-        // verify your user -- use argon2 for password hashing!!
-        if (user.password !== password) {
-          return undefined;
-        }
-        // need to create this method
         return this.newRefreshAndAccessToken(user, values);
       }
 

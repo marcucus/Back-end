@@ -14,23 +14,17 @@ export class User {
   @PrimaryGeneratedColumn()
   id:number;
 
-  @Column()
-  firstname:string;
-
-  @Column()
-  lastname:string;
-
   @Column({ unique: true })
   email:string;
 
-  @Column()
-  password:string;
+  @Column({ nullable:true })
+  firstname:string;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
-  createdAt: Date;
+  @Column({ nullable:true })
+  lastname:string;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
-  updatedAt: Date;
+  @Column({ nullable:true })
+  picture:string;
 
 }
 
