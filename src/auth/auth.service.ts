@@ -1,12 +1,10 @@
 import { Injectable, Redirect } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import RefreshToken from './entities/refresh-token.entity';
 import { Auth, google } from 'googleapis';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
-    private refreshTokens: RefreshToken[]= [];
     private oauthClient: Auth.OAuth2Client;
 
     constructor(public userService: UsersService) {
