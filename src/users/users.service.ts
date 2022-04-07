@@ -25,6 +25,13 @@ export class UsersService {
         return undefined;
     }
 
+    async isUserExists(createUserDto: CreateUserDto): Promise<any> {
+        const { email } = createUserDto;
+        const user = await this.usersRepository.findOne({ email });
+        if (user) return true;
+        else return false;
+      }
+
     findOne(id: number): Promise<User | undefined> {
         const user = this.users.find((user) => user.id === id);
         if (user) {

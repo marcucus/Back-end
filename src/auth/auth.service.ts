@@ -20,16 +20,14 @@ export class AuthService {
         return 'No user from google'
       }
       if (req.user){
-        const exist = await this.userService.findByEmail(req.user.email);
-        if(!exist){
-          const newUser = new CreateUserDto();
-          newUser.firstname = req.user.firstName;
-          newUser.lastname = req.user.lastName;
-          newUser.email = req.user.email;
-          newUser.picture = req.user.picture;
-          await this.userService.create(newUser);
-          console.log(exist);
-        }
+        const newUser = new CreateUserDto();
+        newUser.firstname = req.user.firstName;
+        newUser.lastname = req.user.lastName;
+        newUser.email = req.user.email;
+        newUser.picture = req.user.picture;
+          if(!(await this.userService.isUserExists(newUser))){
+            await this.userService.create(newUser);
+          }
       return {
         message: 'User Info from Google',
         user: req.user,
