@@ -17,33 +17,6 @@ export class UsersService {
         return this.usersRepository.save(createUserDto);
     }
     
-    /*find(email: string): Promise<User | undefined> {
-        const user = this.usersRepository.find((user:User) => user.email === email)
-        if(user){
-            return 'defined';
-        }
-        else{
-            return "undefined";
-        }
-    }*/
-
-    async doesUserExists(email: string){
-        const user = await this.usersRepository.findOne({ email: email });
-        if(user.email.length != 0){
-            return true;
-        }
-        return false;
-    }
-
-    findByMail(email: string){
-        const user = getRepository(User)
-          .createQueryBuilder("user")
-          .where("user.email = :email", { email: email })
-          .getOneOrFail();
-    
-        return user;
-      }
-    
     findByEmail(email:string): Promise<User | undefined> {
         const user = this.users.find((user:User) => user.email === email)
         if(user){
