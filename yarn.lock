@@ -656,6 +656,14 @@
     "tslib" "2.3.1"
     "uuid" "8.3.2"
 
+"@nestjs/jwt@^8.0.0":
+  "integrity" "sha512-fz2LQgYY2zmuD8S+8UE215anwKyXlnB/1FwJQLVR47clNfMeFMK8WCxmn6xdPhF5JKuV1crO6FVabb1qWzDxqQ=="
+  "resolved" "https://registry.npmjs.org/@nestjs/jwt/-/jwt-8.0.0.tgz"
+  "version" "8.0.0"
+  dependencies:
+    "@types/jsonwebtoken" "8.5.4"
+    "jsonwebtoken" "8.5.1"
+
 "@nestjs/mapped-types@*":
   "integrity" "sha512-NFvofzSinp00j5rzUd4tf+xi9od6383iY0JP7o0Bnu1fuItAUkWBgc4EKuIQ3D+c2QI3i9pG1kDWAeY27EMGtg=="
   "resolved" "https://registry.npmjs.org/@nestjs/mapped-types/-/mapped-types-1.0.1.tgz"
@@ -860,7 +868,7 @@
     "@types/qs" "*"
     "@types/range-parser" "*"
 
-"@types/express@^4.17.13":
+"@types/express@*", "@types/express@^4.17.13":
   "integrity" "sha512-6bSZTPaTIACxn48l50SR+axgrqm6qXFIxrdAKaG6PaJk3+zuUr35hBlgT7vOmJcum+OEaIBLtHV/qloEAFITeA=="
   "resolved" "https://registry.npmjs.org/@types/express/-/express-4.17.13.tgz"
   "version" "4.17.13"
@@ -914,10 +922,17 @@
   "resolved" "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   "version" "0.0.29"
 
-"@types/jsonwebtoken@^8.5.8":
+"@types/jsonwebtoken@*", "@types/jsonwebtoken@^8.5.8":
   "integrity" "sha512-zm6xBQpFDIDM6o9r6HSgDeIcLy82TKWctCXEPbJJcXb5AKmi5BNNdLXneixK4lplX3PqIVcwLBCGE/kAGnlD4A=="
   "resolved" "https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-8.5.8.tgz"
   "version" "8.5.8"
+  dependencies:
+    "@types/node" "*"
+
+"@types/jsonwebtoken@8.5.4":
+  "integrity" "sha512-4L8msWK31oXwdtC81RmRBAULd0ShnAHjBuKT9MRQpjP0piNrZdXyTRcKY9/UIfhGeKIT4PvF5amOOUbbT/9Wpg=="
+  "resolved" "https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-8.5.4.tgz"
+  "version" "8.5.4"
   dependencies:
     "@types/node" "*"
 
@@ -931,10 +946,59 @@
   "resolved" "https://registry.npmjs.org/@types/node/-/node-16.11.26.tgz"
   "version" "16.11.26"
 
+"@types/oauth@*":
+  "integrity" "sha512-a1iY62/a3yhZ7qH7cNUsxoI3U/0Fe9+RnuFrpTKr+0WVOzbKlSLojShCKe20aOD1Sppv+i8Zlq0pLDuTJnwS4A=="
+  "resolved" "https://registry.npmjs.org/@types/oauth/-/oauth-0.9.1.tgz"
+  "version" "0.9.1"
+  dependencies:
+    "@types/node" "*"
+
 "@types/parse-json@^4.0.0":
   "integrity" "sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA=="
   "resolved" "https://registry.npmjs.org/@types/parse-json/-/parse-json-4.0.0.tgz"
   "version" "4.0.0"
+
+"@types/passport-google-oauth20@^2.0.11":
+  "integrity" "sha512-9XMT1GfwhZL7UQEiCepLef55RNPHkbrCtsU7rsWPTEOsmu5qVIW8nSemtB4p+P24CuOhA+IKkv8LsPThYghGww=="
+  "resolved" "https://registry.npmjs.org/@types/passport-google-oauth20/-/passport-google-oauth20-2.0.11.tgz"
+  "version" "2.0.11"
+  dependencies:
+    "@types/express" "*"
+    "@types/passport" "*"
+    "@types/passport-oauth2" "*"
+
+"@types/passport-jwt@^3.0.6":
+  "integrity" "sha512-cmAAMIRTaEwpqxlrZyiEY9kdibk94gP5KTF8AT1Ra4rWNZYHNMreqhKUEeC5WJtuN5SJZjPQmV+XO2P5PlnvNQ=="
+  "resolved" "https://registry.npmjs.org/@types/passport-jwt/-/passport-jwt-3.0.6.tgz"
+  "version" "3.0.6"
+  dependencies:
+    "@types/express" "*"
+    "@types/jsonwebtoken" "*"
+    "@types/passport-strategy" "*"
+
+"@types/passport-oauth2@*":
+  "integrity" "sha512-KUNwmGhe/3xPbjkzkPwwcPmyFwfyiSgtV1qOrPBLaU4i4q9GSCdAOyCbkFG0gUxAyEmYwqo9OAF/rjPjJ6ImdA=="
+  "resolved" "https://registry.npmjs.org/@types/passport-oauth2/-/passport-oauth2-1.4.11.tgz"
+  "version" "1.4.11"
+  dependencies:
+    "@types/express" "*"
+    "@types/oauth" "*"
+    "@types/passport" "*"
+
+"@types/passport-strategy@*":
+  "integrity" "sha512-o5D19Jy2XPFoX2rKApykY15et3Apgax00RRLf0RUotPDUsYrQa7x4howLYr9El2mlUApHmCMv5CZ1IXqKFQ2+g=="
+  "resolved" "https://registry.npmjs.org/@types/passport-strategy/-/passport-strategy-0.2.35.tgz"
+  "version" "0.2.35"
+  dependencies:
+    "@types/express" "*"
+    "@types/passport" "*"
+
+"@types/passport@*":
+  "integrity" "sha512-JtswU8N3kxBYgo+n9of7C97YQBT+AYPP2aBfNGTzABqPAZnK/WOAaKfh3XesUYMZRrXFuoPc2Hv0/G/nQFveHw=="
+  "resolved" "https://registry.npmjs.org/@types/passport/-/passport-1.0.7.tgz"
+  "version" "1.0.7"
+  dependencies:
+    "@types/express" "*"
 
 "@types/prettier@^2.1.5":
   "integrity" "sha512-ReVR2rLTV1kvtlWFyuot+d1pkpG2Fw/XKE3PDAdj57rbM97ttSp9JZ2UsP+2EHTylra9cUf6JA7tGwW1INzUrA=="
@@ -3645,7 +3709,7 @@
   optionalDependencies:
     "graceful-fs" "^4.1.6"
 
-"jsonwebtoken@^8.2.0", "jsonwebtoken@^8.5.1":
+"jsonwebtoken@^8.2.0", "jsonwebtoken@^8.5.1", "jsonwebtoken@8.5.1":
   "integrity" "sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w=="
   "resolved" "https://registry.npmjs.org/jsonwebtoken/-/jsonwebtoken-8.5.1.tgz"
   "version" "8.5.1"
@@ -5324,9 +5388,9 @@
     "zen-observable-ts" "^1.0.0"
 
 "typescript@*", "typescript@^3.4.5 || ^4.3.5", "typescript@^4.3.5", "typescript@>=2.7", "typescript@>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta", "typescript@>=3.8 <5.0":
-  "integrity" "sha512-yNIatDa5iaofVozS/uQJEl3JRWLKKGJKh6Yaiv0GLGSuhpFJe7P3SbHZ8/yjAHRQwKRoA6YZqlfjXWmVzoVSMw=="
-  "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.6.3.tgz"
-  "version" "4.6.3"
+  "integrity" "sha512-5BlMof9H1yGt0P8/WF+wPNw6GfctgGjXp5hkblpyT+8rkASSmkUKMXrxR0Xg8ThVCi/JnHQiKXeBaEwCeQwMFw=="
+  "resolved" "https://registry.npmjs.org/typescript/-/typescript-4.5.2.tgz"
+  "version" "4.5.2"
 
 "typescript@>3.6.0", "typescript@4.6.2":
   "integrity" "sha512-HM/hFigTBHZhLXshn9sN37H085+hQGeJHJ/X7LpBWLID/fbc2acUMfU+lGD98X81sKP+pFa9f0DZmCwB9GnbAg=="

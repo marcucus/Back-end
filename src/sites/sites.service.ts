@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateSiteDto } from './dto/create-site.dto';
-import { UpdateSiteDto } from './dto/update-site.dto';
-import { Site } from './entities/site.entity';
+import { CreateSiteDto } from '../dto/sites/create-site.dto';
+import { UpdateSiteDto } from '../dto/sites/update-site.dto';
+import { Site, SitesRepository } from '../entities/site.entity';
 
 @Injectable()
 export class SitesService {
   constructor(
     @InjectRepository(Site)
-    private sitesRepository: Repository<Site>,
+    private sitesRepository: SitesRepository,
   ) {}
 
   create(createSiteDto: CreateSiteDto) {

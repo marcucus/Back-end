@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateKeywordDto } from './dto/create-keyword.dto';
-import { UpdateKeywordDto } from './dto/update-keyword.dto';
-import { Keyword } from './entities/keyword.entity';
+import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
+import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
+import { Keyword } from '../entities/keyword.entity';
 
 @Injectable()
 export class KeywordsService {

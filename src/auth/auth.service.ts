@@ -1,11 +1,16 @@
 import { Injectable, Redirect } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { Auth, google } from 'googleapis';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { CreateUserDto } from '../dto/users/create-user.dto';
+import { JwtStrategy } from './guards/jwt.strategy';
+import { JwtPayload } from 'jsonwebtoken';
+import { JwtAuthService } from './jwt.service';
 
 @Injectable()
 export class AuthService {
     private oauthClient: Auth.OAuth2Client;
+    private jwtService: JwtAuthService;
+    private jwtStrategy: JwtStrategy;
 
     constructor(public userService: UsersService) {
       const clientId = process.env.GOOGLE_CLIENT_ID;

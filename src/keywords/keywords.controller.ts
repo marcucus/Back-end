@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { KeywordsService } from './keywords.service';
-import { CreateKeywordDto } from './dto/create-keyword.dto';
-import { UpdateKeywordDto } from './dto/update-keyword.dto';
+import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
+import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
 
 @Controller('keywords')
 export class KeywordsController {

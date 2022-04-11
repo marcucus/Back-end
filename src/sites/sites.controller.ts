@@ -9,8 +9,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { SitesService } from './sites.service';
-import { CreateSiteDto } from './dto/create-site.dto';
-import { UpdateSiteDto } from './dto/update-site.dto';
+import { CreateSiteDto } from '../dto/sites/create-site.dto';
+import { UpdateSiteDto } from '../dto/sites/update-site.dto';
 
 @Controller('sites')
 export class SitesController {

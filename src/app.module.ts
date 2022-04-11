@@ -4,15 +4,22 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { SitesModule } from './sites/sites.module';
-import { Site } from './sites/entities/site.entity';
+import { Site } from './entities/site.entity';
 import { KeywordsModule } from './keywords/keywords.module';
-import { Keyword } from './keywords/entities/keyword.entity';
+import { Keyword } from './entities/keyword.entity';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { User } from './users/entities/user.entity';
+import { User } from './entities/user.entity';
 import { GoogleStrategy } from './auth/strategies/google.strategy';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './auth/constants/auth.constants';
+import { ModulesForLive } from './modules/ModulesForLive';
 
-@Module({
+const buildModules = new ModulesForLive();
+
+@Module(buildModules.getModulesConfiguration())
+
+/*@Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
@@ -25,6 +32,10 @@ import { GoogleStrategy } from './auth/strategies/google.strategy';
       synchronize: true,
       entities:[Site,Keyword,User],
     }),
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '7d' },
+    }),
     SitesModule,
     KeywordsModule,
     UsersModule,
@@ -32,5 +43,6 @@ import { GoogleStrategy } from './auth/strategies/google.strategy';
   ],
   controllers: [AppController],
   providers: [AppService, GoogleStrategy],
-})
+})*/
+
 export class AppModule {}
