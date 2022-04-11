@@ -1,1 +1,0 @@
-{"version":3,"file":"1649684514795-CreateKeywordTable.js","sourceRoot":"","sources":["../../src/migrations/1649684514795-CreateKeywordTable.ts"],"names":[],"mappings":";;;AAEA,MAAa,+BAA+B;IAEjC,KAAK,CAAC,EAAE,CAAC,WAAwB;QACpC,OAAO,WAAW,CAAC,KAAK,CACpB;;;;;;;;aAQC,CACF,CAAC;IACR,CAAC;IAEM,KAAK,CAAC,IAAI,CAAC,WAAwB;IAC1C,CAAC;CAEJ;AAnBD,0EAmBC"}
