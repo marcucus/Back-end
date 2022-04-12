@@ -1,33 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
 import { Keyword } from '../entities/keyword.entity';
+import { KeywordsRepository } from 'src/repositories/KeywordsRepository';
 
 @Injectable()
 export class KeywordsService {
   constructor(
-    @InjectRepository(Keyword)
-    private keywordsRepository: Repository<Keyword>,
+    private keywordsRepository: KeywordsRepository,
   ) {}
   create(createKeywordDto: CreateKeywordDto) {
-    return this.keywordsRepository.save(createKeywordDto);
+    return this.keywordsRepository.create(createKeywordDto);
   }
 
   findAll() {
     return this.keywordsRepository.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.keywordsRepository.findOne(id);
   }
 
-  update(id: number, updateKeywordDto: UpdateKeywordDto) {
+  update(id: string, updateKeywordDto: UpdateKeywordDto) {
     return this.keywordsRepository.update(id,updateKeywordDto);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.keywordsRepository.delete(id);
   }
 }

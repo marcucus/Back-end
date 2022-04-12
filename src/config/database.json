@@ -20,7 +20,7 @@
         "password": "ranking",
         "database": "postgres",
         "migrationsRun": false,
-        "migrations": ["../seeds/*"],
+        "migrations": ["../../seeds/*{.ts}"],
         "entities":["../entities/*{.ts}"],
         "migrationsTableName": "seeds_typeorm"
       }

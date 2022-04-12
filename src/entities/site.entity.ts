@@ -1,13 +1,8 @@
-import { EntityRepository, Repository } from 'typeorm';
-import { Keyword } from './keyword.entity';
+import { RelationOptions } from 'typeorm';
 import { User } from './user.entity';
 
 export class Site {
   id: number;
   url: string;
-  user: User;
-  keywords: Keyword
+  userId: User;
 }
-
-@EntityRepository(Site)
-export class SitesRepository extends Repository<Site> {}

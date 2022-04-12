@@ -11,6 +11,7 @@ export class CreateSites1649685017933 implements MigrationInterface {
                 {
                 id: 2,
                 url: 'http://www.google.fr/',
+                userId:2,
                 },
             ])
             .execute();

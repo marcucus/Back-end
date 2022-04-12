@@ -1,10 +1,11 @@
 import { Injectable, Redirect } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../services/users.service';
 import { Auth, google } from 'googleapis';
 import { CreateUserDto } from '../dto/users/create-user.dto';
 import { JwtStrategy } from './guards/jwt.strategy';
 import { JwtPayload } from 'jsonwebtoken';
 import { JwtAuthService } from './jwt.service';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,7 @@ export class AuthService {
         return 'No user from google'
       }
       if (req.user){
-        const newUser = new CreateUserDto();
+        const newUser = new User();
         newUser.firstname = req.user.firstName;
         newUser.lastname = req.user.lastName;
         newUser.email = req.user.email;

@@ -1,34 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateSiteDto } from '../dto/sites/create-site.dto';
 import { UpdateSiteDto } from '../dto/sites/update-site.dto';
-import { Site, SitesRepository } from '../entities/site.entity';
+import { Site } from '../entities/site.entity';
+import { SitesRepository } from 'src/repositories/SitesRepository';
+import { KeywordsService } from './keywords.service';
 
 @Injectable()
 export class SitesService {
   constructor(
-    @InjectRepository(Site)
     private sitesRepository: SitesRepository,
+    @Inject(forwardRef(() => KeywordsService))
+    private keywordsService: KeywordsService,
   ) {}
 
   create(createSiteDto: CreateSiteDto) {
-    return this.sitesRepository.save(createSiteDto);
+    return this.sitesRepository.create(createSiteDto);
   }
 
   findAll() {
     return this.sitesRepository.find();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.sitesRepository.findOne(id);
   }
 
-  update(id: number, updateSiteDto: UpdateSiteDto) {
+  update(id: string, updateSiteDto: UpdateSiteDto) {
     return this.sitesRepository.update(id,updateSiteDto);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.sitesRepository.delete(id);
   }
 }

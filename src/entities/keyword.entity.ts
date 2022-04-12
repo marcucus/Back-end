@@ -5,8 +5,5 @@ export class Keyword {
     keywords: string;
     position: number;
     lastPosition: number;
-    site: Site;
+    siteId: number;
 }
-
-@EntityRepository(Keyword)
-export class KeywordsRepository extends Repository<Keyword> {}

@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
-import { KeywordsService } from './keywords.service';
-import { KeywordsController } from './keywords.controller';
-import { Keyword, KeywordsRepository} from '../entities/keyword.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { KeywordsService } from '../services/keywords.service';
+import { KeywordsController } from '../controllers/keywords.controller';
+import { KeywordsRepository } from '../repositories/KeywordsRepository'
+import { SitesModule } from 'src/sites/sites.module';
+import { UsersModule } from 'src/users/users.module';
+import { forwardRef } from '@nestjs/common';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Keyword])],
+  imports: [forwardRef(() => SitesModule)],
   controllers: [KeywordsController],
   providers: [KeywordsService, KeywordsRepository],
-  exports: [KeywordsService],
+  exports: [KeywordsService, KeywordsRepository],
 })
 export class KeywordsModule {}

@@ -13,7 +13,7 @@ export class CreateKeywords1649685009773 implements MigrationInterface {
             word: 'google',
             position: 1,
             lastposition: 2,
-            siteId: 'site:base',
+            siteId: 2,
             },
         ])
         .execute();

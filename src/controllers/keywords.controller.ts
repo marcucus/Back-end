@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
-import { KeywordsService } from './keywords.service';
+import { KeywordsService } from '../services/keywords.service';
 import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
 
@@ -19,16 +19,16 @@ export class KeywordsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.keywordsService.findOne(+id);
+    return this.keywordsService.findOne(id);
   }
 
-  @Put('update/:id')
+  /*@Put('update/:id')
   update(@Param('id') id: string, @Body() updateKeywordDto: UpdateKeywordDto) {
-    return this.keywordsService.update(+id, updateKeywordDto);
+    return this.keywordsService.update(id, updateKeywordDto);
   }
 
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
-    return this.keywordsService.remove(+id);
-  }
+    return this.keywordsService.remove(id);
+  }*/
 }

@@ -8,7 +8,7 @@ import {
   Delete,
   Put,
 } from '@nestjs/common';
-import { SitesService } from './sites.service';
+import { SitesService } from '../services/sites.service';
 import { CreateSiteDto } from '../dto/sites/create-site.dto';
 import { UpdateSiteDto } from '../dto/sites/update-site.dto';
 
@@ -28,16 +28,16 @@ export class SitesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.sitesService.findOne(+id);
+    return this.sitesService.findOne(id);
   }
 
   @Put('update/:id')
   update(@Param('id') id: string, @Body() updateSiteDto: UpdateSiteDto) {
-    return this.sitesService.update(+id, updateSiteDto);
+    return this.sitesService.update(id, updateSiteDto);
   }
 
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
-    return this.sitesService.remove(+id);
+    return this.sitesService.remove(id);
   }
 }
