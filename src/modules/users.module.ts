@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { UsersController } from '../controllers/users.controller';
 import { UsersRepository } from 'src/repositories/UsersRepository';
-import { SitesModule } from 'src/sites/sites.module';
-import { KeywordsModule } from 'src/keywords/keywords.module';
+import { SitesModule } from './sites.module';
+import { KeywordsModule } from './keywords.module';
 
 @Module({
   imports: [SitesModule, KeywordsModule],

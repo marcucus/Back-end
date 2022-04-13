@@ -9,7 +9,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       const response = await manager.query(
         `
           SELECT *
-          FROM keyword
+          FROM "keyword"
           WHERE id = $1
           LIMIT 1
         `,
@@ -24,7 +24,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       const response = await manager.query(
         `
           SELECT *
-          FROM keyword
+          FROM "keyword"
         `,
       );
   
@@ -46,9 +46,6 @@ export class KeywordsRepository implements IKeywordsRepository {
 
     async update(id: string, keyword : UpdateKeywordDto){
       const manager = getManager();
-      console.log(keyword.keywords);
-      console.log(keyword.position);
-      console.log(keyword.lastPosition);
       const response = await manager.createQueryBuilder()
         .update('keyword')
         .set({ keywords:keyword.keywords, position:keyword.position, lastPosition:keyword.lastPosition })

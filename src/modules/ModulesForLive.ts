@@ -1,6 +1,6 @@
 import { PassportModule } from "@nestjs/passport";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AuthModule } from "../auth/auth.module";
+import { AuthModule } from "./auth.module";
 import { jwtConstants } from "../auth/constants/auth.constants";
 import { getConfig } from "../config/database";
 import { JwtModule } from '@nestjs/jwt';
@@ -9,18 +9,22 @@ import { ConfigModule } from "@nestjs/config";
 import { AppController } from "../app.controller";
 import { AppService } from "../app.service";
 
+export const passportModule = PassportModule.register({ defaultStrategy: 'jwt' });
+
 export class ModulesForLive {
     getModulesConfiguration() {
         return {
           imports: [
             ConfigModule.forRoot(),
             TypeOrmModule.forRoot(getConfig()),
+            passportModule,
             PassportModule,
             JwtModule.register({
               secret: jwtConstants.secret,
               signOptions: { expiresIn: '7d' },
             }),
-            AuthModule
+            AuthModule,
+
         ],
         providers: [
             AppService, 

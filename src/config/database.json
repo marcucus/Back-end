@@ -8,9 +8,10 @@
         "username": "postgres",
         "password": "ranking",
         "database": "postgres",
-        "migrations":["../../migrations/*{.ts}"],
-        "entities":["../entities/*{.ts}"],
-        "migrationsRun": false
+        "migrations":["../../migrations/*{.ts}","../migrations/*{.js}"],
+        "entities":["../entities/*{.ts}","../entities/*{.js}"],
+        "migrationsRun": true,
+        "synchronize":true
       },
       {
         "name": "seed",
@@ -20,11 +21,12 @@
         "username": "postgres",
         "password": "ranking",
         "database": "postgres",
-        "migrationsRun": false,
-        "migrations":["../../migrations/*{.ts}"],
+        "migrationsRun": true,
+        "migrations":["../../migrations/*{.ts}","../migrations/*{.js}"],
         "seeds": ["../../seeds/*{.ts}"],
-        "entities":["../entities/*{.ts}"],
-        "migrationsTableName": "seeds_typeorm"
+        "entities":["../entities/*{.ts}","../entities/*{.js}"],
+        "migrationsTableName": "seeds_typeorm",
+        "synchronize":true
       }
     ],
     "development": {
@@ -34,9 +36,10 @@
       "username": "postgres",
       "password": "ranking",
       "database": "postgres",
-      "migrationsRun": false,
-      "migrations":["../../migrations/*{.ts}"],
-      "entities":["../entities/*{.ts}"],
-      "migrationsTableName": "migrations_typeorm"
+      "migrationsRun": true,
+      "migrations":["../../migrations/*{.ts}","../migrations/*{.js}"],
+      "entities":["../entities/*{.ts}","../entities/*{.js}"],
+      "migrationsTableName": "migrations_typeorm",
+      "synchronize":true
     }
   }

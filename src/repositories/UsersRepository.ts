@@ -8,7 +8,7 @@ export class UsersRepository implements IUsersRepository {
       const response = await manager.query(
         `
           SELECT *
-          FROM user
+          FROM "user"
           WHERE id = $1
           LIMIT 1
         `,
@@ -17,7 +17,31 @@ export class UsersRepository implements IUsersRepository {
   
       return (response[0] as User) || null;
     }
+
+    async find(): Promise<User| null> {
+      const manager = getManager();
+      const response = await manager.query(
+        `
+          SELECT *
+          FROM "user"
+        `,
+      );
+      return (response as User) || null;
+    }
+
   
+    async findByEmail(email: string): Promise<User>{
+      const manager = getManager();
+      const user:User = await manager.query(
+        `
+          SELECT *
+          FROM "user"
+          WHERE email = '${email}'
+        `,
+      );
+      return user;
+    }
+
     async create(user: User): Promise<User> {
       const manager = getManager();
       await manager

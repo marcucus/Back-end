@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
-import { Keyword } from '../entities/keyword.entity';
 import { KeywordsRepository } from 'src/repositories/KeywordsRepository';
 
 @Injectable()

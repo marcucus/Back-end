@@ -1,17 +1,11 @@
-import { Injectable, Redirect } from '@nestjs/common';
-import { UsersService } from '../services/users.service';
+import { Injectable} from '@nestjs/common';
+import { UsersService } from './users.service';
 import { Auth, google } from 'googleapis';
-import { CreateUserDto } from '../dto/users/create-user.dto';
-import { JwtStrategy } from './guards/jwt.strategy';
-import { JwtPayload } from 'jsonwebtoken';
-import { JwtAuthService } from './jwt.service';
 import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class AuthService {
     private oauthClient: Auth.OAuth2Client;
-    private jwtService: JwtAuthService;
-    private jwtStrategy: JwtStrategy;
 
     constructor(public userService: UsersService) {
       const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -32,9 +26,14 @@ export class AuthService {
           if(!(await this.userService.isUserExists(newUser))){
             await this.userService.create(newUser);
           }
+        const email:string = req.user.email;
+        const user = await this.userService.infoByEmail(email);
+        const id:string = user[0].id;
+        const token = await this.userService.getBearerToken(id,email);
       return {
         message: 'User Info from Google',
         user: req.user,
+        token:token,
         }
       }
     }

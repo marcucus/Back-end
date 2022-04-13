@@ -9,7 +9,7 @@ export class SitesRepository implements ISitesRepository {
       const response = await manager.query(
         `
           SELECT *
-          FROM site
+          FROM "site"
           WHERE id = ${id}
           LIMIT 1
         `,
@@ -23,7 +23,7 @@ export class SitesRepository implements ISitesRepository {
       const response = await manager.query(
         `
           SELECT *
-          FROM site
+          FROM "site"
         `,
       );
   
@@ -55,8 +55,6 @@ export class SitesRepository implements ISitesRepository {
     }
 
     async update(id: string, updateSiteDto:UpdateSiteDto){
-      console.log(updateSiteDto.url);
-      console.log(id);
       const manager = getManager();
       await manager.createQueryBuilder()
       .update("site")
