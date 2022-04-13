@@ -1,9 +1,8 @@
-import { EntityRepository, Repository } from 'typeorm';
 import {Site} from './site.entity';
 export class Keyword {
-    id: number;
+    id: string;
     keywords: string;
-    position: number;
-    lastPosition: number;
-    siteId: number;
+    position: string;
+    lastPosition: string;
+    siteId: Site;
 }

@@ -22,7 +22,7 @@ export class KeywordsController {
     return this.keywordsService.findOne(id);
   }
 
-  /*@Put('update/:id')
+  @Put('update/:id')
   update(@Param('id') id: string, @Body() updateKeywordDto: UpdateKeywordDto) {
     return this.keywordsService.update(id, updateKeywordDto);
   }
@@ -30,5 +30,5 @@ export class KeywordsController {
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.keywordsService.remove(id);
-  }*/
+  }
 }

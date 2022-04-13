@@ -1,9 +1,9 @@
 import { Site } from "../../entities/site.entity";
 
 export class CreateKeywordDto {
-    id:number;
+    id:string;
     keywords: string;
-    position: number;
-    lastPosition: number;
-    siteId:number;
+    position: string;
+    lastPosition: string;
+    siteId:Site;
 }

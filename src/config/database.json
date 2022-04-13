@@ -8,6 +8,7 @@
         "username": "postgres",
         "password": "ranking",
         "database": "postgres",
+        "migrations":["../../migrations/*{.ts}"],
         "entities":["../entities/*{.ts}"],
         "migrationsRun": false
       },
@@ -20,7 +21,8 @@
         "password": "ranking",
         "database": "postgres",
         "migrationsRun": false,
-        "migrations": ["../../seeds/*{.ts}"],
+        "migrations":["../../migrations/*{.ts}"],
+        "seeds": ["../../seeds/*{.ts}"],
         "entities":["../entities/*{.ts}"],
         "migrationsTableName": "seeds_typeorm"
       }
@@ -33,6 +35,7 @@
       "password": "ranking",
       "database": "postgres",
       "migrationsRun": false,
+      "migrations":["../../migrations/*{.ts}"],
       "entities":["../entities/*{.ts}"],
       "migrationsTableName": "migrations_typeorm"
     }

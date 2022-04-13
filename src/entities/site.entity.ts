@@ -1,8 +1,7 @@
-import { RelationOptions } from 'typeorm';
 import { User } from './user.entity';
 
 export class Site {
-  id: number;
+  id: string;
   url: string;
   userId: User;
 }

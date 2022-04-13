@@ -28,7 +28,7 @@ export class KeywordsRepository implements IKeywordsRepository {
         `,
       );
   
-      return (response[0] as Keyword) || null;
+      return (response as Keyword) || null;
     }
 
     async create(keyword: Keyword): Promise<Keyword> {
@@ -46,14 +46,14 @@ export class KeywordsRepository implements IKeywordsRepository {
 
     async update(id: string, keyword : UpdateKeywordDto){
       const manager = getManager();
-      const response = await manager.query(
-        `
-          UPDATE keyword
-          SET 
-            url = '${keyword.keywords}'
-          WHERE id = ${id}
-          `
-        );
+      console.log(keyword.keywords);
+      console.log(keyword.position);
+      console.log(keyword.lastPosition);
+      const response = await manager.createQueryBuilder()
+        .update('keyword')
+        .set({ keywords:keyword.keywords, position:keyword.position, lastPosition:keyword.lastPosition })
+        .where("id = :id", { id: id })
+        .execute();
       return response;
     }
 

@@ -10,7 +10,6 @@ import { KeywordsService } from './keywords.service';
 export class SitesService {
   constructor(
     private sitesRepository: SitesRepository,
-    @Inject(forwardRef(() => KeywordsService))
     private keywordsService: KeywordsService,
   ) {}
 

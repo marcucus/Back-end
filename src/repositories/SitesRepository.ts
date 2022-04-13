@@ -54,16 +54,14 @@ export class SitesRepository implements ISitesRepository {
       return response;
     }
 
-    async update(id: string, site : UpdateSiteDto){
+    async update(id: string, updateSiteDto:UpdateSiteDto){
+      console.log(updateSiteDto.url);
+      console.log(id);
       const manager = getManager();
-      const response = await manager.query(
-        `
-          UPDATE site
-          SET 
-            url = '${site.url}'
-          WHERE id = ${id}
-          `
-        );
-      return response;
+      await manager.createQueryBuilder()
+      .update("site")
+      .set({ url:updateSiteDto.url})
+      .where("id = :id", { id: id })
+      .execute();
     }
   }
