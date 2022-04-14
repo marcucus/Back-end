@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateKeywordDto } from './create-keyword.dto';
+import { Keyword } from 'src/entities/keyword.entity';
+import { Site } from 'src/entities/site.entity';
 
-export class UpdateKeywordDto extends PartialType(CreateKeywordDto) {}
+export class UpdateKeywordDto {
+    keywords: string;
+    position: string;
+    siteId:Site;
+    lastPosition: string;
+    date:Date;
+    keywordId:Keyword;
+}

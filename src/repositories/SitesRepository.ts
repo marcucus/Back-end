@@ -24,6 +24,7 @@ export class SitesRepository implements ISitesRepository {
         `
           SELECT *
           FROM "site"
+          INNER JOIN "keyword" ON "site"."id"="keyword"."siteId"
         `,
       );
   

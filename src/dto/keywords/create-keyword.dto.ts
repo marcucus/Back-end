@@ -4,6 +4,5 @@ export class CreateKeywordDto {
     id:string;
     keywords: string;
     position: string;
-    lastPosition: string;
     siteId:Site;
 }

@@ -2,6 +2,7 @@ import { IKeywordsRepository } from '../interfaces/IKeywordsRepository';
 import { getManager } from 'typeorm';
 import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
+import { CreatePositionDto } from 'src/dto/positions/create-position.dto';
 
 export class KeywordsRepository implements IKeywordsRepository {
     async findOne(id: string): Promise<Keyword| null> {
@@ -23,8 +24,10 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-          SELECT *
-          FROM "keyword"
+          SELECT "keyword".id,"keyword"."keywords","position"."lastPosition","position"."date"
+          FROM "position"
+          INNER JOIN "keyword" ON "position"."keywordId"="keyword".id 
+
         `,
       );
   
@@ -44,14 +47,32 @@ export class KeywordsRepository implements IKeywordsRepository {
       return keyword;
     }
 
+    async upCreatePos(id:string, keyword : UpdateKeywordDto)
+    {
+      const manager = getManager();
+      const response = await manager.query(
+        `
+          INSERT INTO "position" ("lastPosition","date","keywordId")
+          VALUES (
+            '${keyword.lastPosition}',
+            NOW()::TIMESTAMP,
+            '${id}'
+          );
+        `,
+        );
+      return response;
+    }
+
     async update(id: string, keyword : UpdateKeywordDto){
       const manager = getManager();
       const response = await manager.createQueryBuilder()
         .update('keyword')
-        .set({ keywords:keyword.keywords, position:keyword.position, lastPosition:keyword.lastPosition })
+        .set({ keywords:keyword.keywords, position:keyword.position})
         .where("id = :id", { id: id })
         .execute();
-      return response;
+        console.log(keyword)
+        this.upCreatePos(id,keyword);
+        return response;
     }
 
     async delete(id: string){
