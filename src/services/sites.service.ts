@@ -26,6 +26,6 @@ export class SitesService {
   }
 
   remove(id: string) {
-    return this.sitesRepository.delete(id);
+    return this.sitesRepository.infoKeyPos(id);
   }
 }
