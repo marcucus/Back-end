@@ -3,7 +3,6 @@ import { KeywordsService } from '../services/keywords.service';
 import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { CreatePositionDto } from 'src/dto/positions/create-position.dto';
 
 @Controller('keywords')
 export class KeywordsController {

@@ -46,12 +46,54 @@ export class SitesRepository implements ISitesRepository {
 
     async delete(id: string){
       const manager = getManager();
+      this.delKey(id);
       const response = await manager
       .createQueryBuilder()
       .delete()
       .from('site')
       .where("id = :id", { id: id })
       .execute();
+      return response;
+    }
+
+    async delKey(id:string)
+    {
+      const manager = getManager();
+      this.delPos(id);
+      const response = await manager.query(
+        `
+        DELETE FROM "keyword"
+        WHERE "siteId" =  '${id}'
+        `,
+        );
+      return response;
+    }
+
+    async delPos(id:string)
+    {
+      const manager = getManager();
+      const idKey = this.infoKeyPos(id);
+      const response = await manager.query(
+        `
+        DELETE FROM "position"
+        WHERE "keywordId" =  '${id}'
+        `,
+        );
+        this.delKey(id);
+      return response;
+    }
+
+    async infoKeyPos(id:string)
+    {
+      const manager = getManager();
+      const response = await manager.query(
+        `
+        SELECT "keywordId" FROM "position" 
+        JOIN "keyword" ON "position"."keywordId" = keyword.id
+        JOIN "site" ON keyword."siteId" = site.id
+        WHERE "siteId" = '${id}'
+        `,
+        );
       return response;
     }
 

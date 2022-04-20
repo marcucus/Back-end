@@ -2,7 +2,7 @@ import { IKeywordsRepository } from '../interfaces/IKeywordsRepository';
 import { getManager } from 'typeorm';
 import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
-import { CreatePositionDto } from 'src/dto/positions/create-position.dto';
+import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
 
 export class KeywordsRepository implements IKeywordsRepository {
     async findOne(id: string): Promise<Keyword| null> {
@@ -27,14 +27,14 @@ export class KeywordsRepository implements IKeywordsRepository {
           SELECT "keyword".id,"keyword"."keywords","position"."lastPosition","position"."date"
           FROM "position"
           INNER JOIN "keyword" ON "position"."keywordId"="keyword".id 
-
         `,
       );
   
       return (response as Keyword) || null;
     }
+    
 
-    async create(keyword: Keyword): Promise<Keyword> {
+    async create(keyword: CreateKeywordDto): Promise<Keyword> {
       const manager = getManager();
       await manager
         .createQueryBuilder()
@@ -70,19 +70,31 @@ export class KeywordsRepository implements IKeywordsRepository {
         .set({ keywords:keyword.keywords, position:keyword.position})
         .where("id = :id", { id: id })
         .execute();
-        console.log(keyword)
         this.upCreatePos(id,keyword);
         return response;
     }
 
     async delete(id: string){
       const manager = getManager();
+      this.del(id);
       const response = await manager
       .createQueryBuilder()
       .delete()
       .from('keyword')
       .where("id = :id", { id: id })
       .execute();
+      return response;
+    }
+
+    async del(id:string)
+    {
+      const manager = getManager();
+      const response = await manager.query(
+        `
+        DELETE FROM "position"
+        WHERE "keywordId" =  '${id}'
+        `,
+        );
       return response;
     }
   }
