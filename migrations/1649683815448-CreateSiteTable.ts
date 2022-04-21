@@ -8,8 +8,8 @@ export class CreateSiteTable1649683815448 implements MigrationInterface {
                   id character varying PRIMARY KEY,
                   url character varying NOT NULL,
                   userId character varying NOT NULL,
-                  FOREIGN KEY ("userId") REFERENCES user.id(id),
-              )
+                  FOREIGN KEY ("userId") REFERENCES user.id(id)
+              );
             `,
           );
     }

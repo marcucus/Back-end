@@ -3,6 +3,7 @@ import { KeywordsService } from '../services/keywords.service';
 import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CheckKeywordDto } from 'src/dto/keywords/check-keyword.dto';
 
 @Controller('keywords')
 export class KeywordsController {
@@ -30,6 +31,12 @@ export class KeywordsController {
   @Put('update/:id')
   update(@Param('id') id: string, @Body() updateKeywordDto: UpdateKeywordDto) {
     return this.keywordsService.update(id, updateKeywordDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('check/:id')
+  check(@Param('id') id: string, @Body() updateKeywordDto: CheckKeywordDto) {
+    return this.keywordsService.check(id, updateKeywordDto);
   }
 
   @UseGuards(JwtAuthGuard)

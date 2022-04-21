@@ -3,6 +3,7 @@ import { getManager } from 'typeorm';
 import { Site } from 'src/entities/site.entity';
 import { UpdateSiteDto } from 'src/dto/sites/update-site.dto';
 import { Position } from 'src/entities/position.entity';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class SitesRepository implements ISitesRepository {
     async findOne(id: string): Promise<Site| null> {
@@ -46,19 +47,77 @@ export class SitesRepository implements ISitesRepository {
     }
 
     async delete(id: string){
-      const manager = getManager();
-      this.delPos(id);
-      this.delKey(id);
-      const response = await manager
-      .createQueryBuilder()
-      .delete()
-      .from('site')
-      .where("id = :id", { id: id })
-      .execute();
-      return response;
+      /*const manager = getManager();
+      const infos = await manager.query(
+        `
+        SELECT "id" FROM "keyword"
+        WHERE "siteId" =  '${id}'
+        `,
+        );
+        for(var i=0; i < infos.length; i++){
+            manager.query(
+            `
+            DELETE FROM "position"
+            WHERE "keywordId" =  '${infos[i].id}'
+            `,
+            );
+        }
+        await manager.query(
+          `
+          DELETE FROM "keyword"
+          WHERE "siteId" =  '${id}'
+          `,
+          );
+        const response = await manager
+        .createQueryBuilder()
+        .delete()
+        .from('site')
+        .where("id = :id", { id: id })
+        .execute();
+        return response;*/
+
+        const manager = getManager();
+        const infos:any = await manager.query(
+          `
+          SELECT "id" FROM "keyword"
+          WHERE "siteId" =  '${id}'
+          `,
+          );
+          for(var i=0; i < infos.length; i++){
+            manager.query(
+              `
+              DELETE FROM "position"
+              WHERE "keywordId" =  '${infos[i].id}'
+              `,
+              );
+          }
+        await this.delKeywords(id);
+        await this.del(id);
     }
 
-    async delKey(id:string)
+    
+    async delPos(id: string)
+    {
+      const manager = getManager();
+      const infos = await manager.query(
+        `
+        SELECT "id" FROM "keyword"
+        WHERE "siteId" =  '${id}'
+        `,
+        );
+        for(var i=0; i < infos.length; i++){
+          await manager.query(
+            `
+            DELETE FROM "position"
+            WHERE "keywordId" =  '${infos[i].id}'
+            `,
+            );
+          
+        }
+      return infos;
+    }
+
+    async delKeywords(id:string)
     {
       const manager = getManager();
       const response = await manager.query(
@@ -70,31 +129,15 @@ export class SitesRepository implements ISitesRepository {
       return response;
     }
 
-    async delPos(id: string)
+    async del(id:string)
     {
       const manager = getManager();
-      const idKey = await this.infoKeyPos(id);
-      const response = await manager.query(
-        `
-        DELETE FROM "position"
-        WHERE "keywordId" =  '${idKey}'
-        `,
-        );
-      return response;
-    }
-
-    async infoKeyPos(id:string)
-    {
-      const manager = getManager();
-      const response = await manager.query(
-        `
-        SELECT * FROM "position" 
-        JOIN "keyword" ON "position"."keywordId" = keyword.id
-        JOIN "site" ON keyword."siteId" = site.id
-        WHERE "siteId" = '${id}'
-        `,
-        );
-        console.log(response);
+      const response = await manager
+      .createQueryBuilder()
+      .delete()
+      .from('site')
+      .where("id = :id", { id: id })
+      .execute();
       return response;
     }
 

@@ -1,8 +1,10 @@
 import { IKeywordsRepository } from '../interfaces/IKeywordsRepository';
-import { getManager } from 'typeorm';
+import { getManager, Timestamp } from 'typeorm';
 import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
+import { CheckKeywordDto } from 'src/dto/keywords/check-keyword.dto';
+import { timestamp } from 'rxjs';
 
 export class KeywordsRepository implements IKeywordsRepository {
     async findOne(id: string): Promise<Keyword| null> {
@@ -36,18 +38,21 @@ export class KeywordsRepository implements IKeywordsRepository {
 
     async create(keyword: CreateKeywordDto): Promise<Keyword> {
       const manager = getManager();
-      await manager
-        .createQueryBuilder()
-        .insert()
-        .into('keyword')
-        .values(keyword)
-        .orIgnore()
-        .execute();
-  
+      await manager.query(
+        `
+          INSERT INTO "keyword" ("position","siteId","keywords","lastCheck")
+          VALUES (
+            '${keyword.position}',
+            '${keyword.siteId}',
+            '${keyword.keywords}',
+            NOW()::TIMESTAMP
+          );
+        `
+      );
       return keyword;
     }
 
-    async upCreatePos(id:string, keyword : UpdateKeywordDto)
+    async upCreatePos(id:string, keyword : CheckKeywordDto)
     {
       const manager = getManager();
       const response = await manager.query(
@@ -67,11 +72,23 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.createQueryBuilder()
         .update('keyword')
-        .set({ keywords:keyword.keywords, position:keyword.position})
+        .set({ keywords:keyword.keywords })
         .where("id = :id", { id: id })
         .execute();
-        this.upCreatePos(id,keyword);
         return response;
+    }
+
+    async checkPos(id: string, keyword: CheckKeywordDto){
+      const manager = getManager();
+      const response = await manager.query(
+        `
+          UPDATE "keyword" 
+          SET "lastCheck" = NOW()::TIMESTAMP, "position" = '${keyword.position}'
+          WHERE id = '${id}'
+        `,
+        );
+        this.upCreatePos(id,keyword);
+      return response;
     }
 
     async delete(id: string){

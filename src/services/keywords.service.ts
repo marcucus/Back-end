@@ -3,6 +3,7 @@ import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
 import { KeywordsRepository } from 'src/repositories/KeywordsRepository';
 import { CreatePositionDto } from 'src/dto/positions/create-position.dto';
+import { CheckKeywordDto } from 'src/dto/keywords/check-keyword.dto';
 
 @Injectable()
 export class KeywordsService {
@@ -23,6 +24,10 @@ export class KeywordsService {
 
   update(id: string, updateKeywordDto: UpdateKeywordDto) {
     return this.keywordsRepository.update(id,updateKeywordDto);
+  }
+
+  check(id: string, updateKeywordDto: CheckKeywordDto) {
+    return this.keywordsRepository.checkPos(id,updateKeywordDto);
   }
 
   remove(id: string) {

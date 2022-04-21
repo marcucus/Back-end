@@ -10,8 +10,9 @@ export class CreateKeywordTable1649684514795 implements MigrationInterface {
                   position character varying,
                   lastposition character varying,
                   siteId character varying NOT NULL,
-                  FOREIGN KEY ("siteId") REFERENCES site.id(id),
-              )
+                  lastChek date varying,
+                  FOREIGN KEY ("siteId") REFERENCES site.id(id)
+              );
             `,
           );
     }

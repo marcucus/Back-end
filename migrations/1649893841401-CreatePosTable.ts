@@ -9,8 +9,8 @@ export class CreatePosTable1649893841401 implements MigrationInterface {
                   position character varying,
                   date date varying,
                   keywordId character varying NOT NULL,
-                  FOREIGN KEY ("keywordId") REFERENCES keyword.id(id),
-              )
+                  FOREIGN KEY ("keywordId") REFERENCES keyword.id(id)
+              );
             `,
           );
     }

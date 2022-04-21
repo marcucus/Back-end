@@ -9,8 +9,8 @@ export class CreateUserTable1649683630915 implements MigrationInterface {
                   email character varying NOT NULL,
                   firstname character varying,
                   lastname character varying,
-                  picture character varying,
-              )
+                  picture character varying
+              );
             `,
           );
     }
