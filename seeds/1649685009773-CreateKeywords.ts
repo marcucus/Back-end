@@ -1,3 +1,4 @@
+import { timestamp } from "rxjs";
 import { MigrationInterface, QueryRunner } from "typeorm"
 
 export class CreateKeywords1649685009773 implements MigrationInterface {
@@ -9,11 +10,10 @@ export class CreateKeywords1649685009773 implements MigrationInterface {
         .into('keyword')
         .values([
             {
-            id: 2,
-            word: 'google',
+            id: 1,
             position: 1,
-            lastposition: 2,
-            siteId: 2,
+            siteId: 1,
+            keywords: 'google',
             },
         ])
         .execute();

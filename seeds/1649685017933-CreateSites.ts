@@ -9,9 +9,9 @@ export class CreateSites1649685017933 implements MigrationInterface {
             .into('site')
             .values([
                 {
-                id: 2,
+                id: 1,
                 url: 'http://www.google.fr/',
-                userId:2,
+                userId:1,
                 },
             ])
             .execute();

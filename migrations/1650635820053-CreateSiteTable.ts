@@ -1,14 +1,14 @@
 import { MigrationInterface, QueryRunner } from "typeorm"
 
-export class CreateSiteTable1649683815448 implements MigrationInterface {
+export class CreateSiteTable1650635820053 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         return queryRunner.query(
-            `CREATE TABLE IF NOT EXISTS ranking.site (
-                  id character varying PRIMARY KEY,
+            `CREATE TABLE IF NOT EXISTS ranking.sites (
+                  id serial4  PRIMARY KEY,
                   url character varying NOT NULL,
-                  userId character varying NOT NULL,
-                  FOREIGN KEY ("userId") REFERENCES user.id(id)
+                  userId int4 NOT NULL,
+                  FOREIGN KEY (userId) REFERENCES ranking.users(id) ON DELETE CASCADE
               );
             `,
           );

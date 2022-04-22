@@ -9,7 +9,7 @@ export class CreateUsers1649685013978 implements MigrationInterface {
         .into('user')
         .values([
             {
-            id: 2,
+            id: 1,
             email: 'user@base.com',
             firstname: 'user',
             lastname: 'base',

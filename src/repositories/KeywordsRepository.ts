@@ -4,7 +4,6 @@ import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
 import { CheckKeywordDto } from 'src/dto/keywords/check-keyword.dto';
-import { timestamp } from 'rxjs';
 
 export class KeywordsRepository implements IKeywordsRepository {
     async findOne(id: string): Promise<Keyword| null> {
@@ -12,7 +11,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       const response = await manager.query(
         `
           SELECT *
-          FROM "keyword"
+          FROM ranking.keywords
           WHERE id = $1
           LIMIT 1
         `,
@@ -26,9 +25,9 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-          SELECT "keyword".id,"keyword"."keywords","position"."lastPosition","position"."date"
-          FROM "position"
-          INNER JOIN "keyword" ON "position"."keywordId"="keyword".id 
+          SELECT ranking.keywords.id,ranking.keywords.keywords,ranking.positions.lastposition,ranking.positions.date
+          FROM ranking.positions
+          INNER JOIN ranking.keywords ON ranking.positions.keywordid= ranking.keywords.id 
         `,
       );
   
@@ -38,13 +37,14 @@ export class KeywordsRepository implements IKeywordsRepository {
 
     async create(keyword: CreateKeywordDto): Promise<Keyword> {
       const manager = getManager();
+      const relatedKeyword = keyword.keywords.replace(/\s/g,"+")
       await manager.query(
         `
-          INSERT INTO "keyword" ("position","siteId","keywords","lastCheck")
+          INSERT INTO ranking.keywords ("position","keywords","siteid","lastcheck")
           VALUES (
             '${keyword.position}',
-            '${keyword.siteId}',
-            '${keyword.keywords}',
+            '${relatedKeyword}',
+            '${keyword.siteid}',
             NOW()::TIMESTAMP
           );
         `
@@ -57,22 +57,23 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-          INSERT INTO "position" ("lastPosition","date","keywordId")
+          INSERT INTO ranking.positions ("lastposition","keywordid","date")
           VALUES (
-            '${keyword.lastPosition}',
-            NOW()::TIMESTAMP,
-            '${id}'
+            '${keyword.lastposition}',
+            '${id}',
+            NOW()::TIMESTAMP
           );
-        `,
+        `
         );
       return response;
     }
 
     async update(id: string, keyword : UpdateKeywordDto){
       const manager = getManager();
+      const relatedKeyword = keyword.keywords.replace(/\s/g,"+")
       const response = await manager.createQueryBuilder()
-        .update('keyword')
-        .set({ keywords:keyword.keywords })
+        .update('ranking.keywords')
+        .set({ keywords:relatedKeyword })
         .where("id = :id", { id: id })
         .execute();
         return response;
@@ -82,13 +83,48 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-          UPDATE "keyword" 
-          SET "lastCheck" = NOW()::TIMESTAMP, "position" = '${keyword.position}'
+          UPDATE ranking.keywords 
+          SET lastcheck = NOW()::TIMESTAMP, position = '${keyword.position}'
           WHERE id = '${id}'
-        `,
+        `
         );
         this.upCreatePos(id,keyword);
+        this.addRequest();
       return response;
+    }
+
+    async addRequest(){
+      const manager = getManager();
+      const nbRequest = await manager.query(
+        `
+          SELECT number
+          FROM ranking.request
+        `
+      );
+      if(nbRequest.number<=199){
+      const response = await manager.query(
+        `
+          UPDATE ranking.request
+          SET number = number+1
+        `
+        );
+        return response;
+      }
+      else {
+        this.resetProxy();
+        const response = await manager.query(
+          `
+            UPDATE ranking.request
+            SET number = 0
+          `
+          );
+          return response;
+      }
+
+    }
+
+    async resetProxy(){
+
     }
 
     async delete(id: string){
@@ -97,7 +133,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       const response = await manager
       .createQueryBuilder()
       .delete()
-      .from('keyword')
+      .from('ranking.keywords')
       .where("id = :id", { id: id })
       .execute();
       return response;
@@ -108,8 +144,8 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-        DELETE FROM "position"
-        WHERE "keywordId" =  '${id}'
+        DELETE FROM ranking.positions
+        WHERE "keywordid" =  '${id}'
         `,
         );
       return response;

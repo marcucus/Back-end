@@ -2,8 +2,6 @@ import { ISitesRepository } from '../interfaces/ISitesRepository';
 import { getManager } from 'typeorm';
 import { Site } from 'src/entities/site.entity';
 import { UpdateSiteDto } from 'src/dto/sites/update-site.dto';
-import { Position } from 'src/entities/position.entity';
-import { ConsoleLogger } from '@nestjs/common';
 
 export class SitesRepository implements ISitesRepository {
     async findOne(id: string): Promise<Site| null> {
@@ -11,7 +9,7 @@ export class SitesRepository implements ISitesRepository {
       const response = await manager.query(
         `
           SELECT *
-          FROM "site"
+          FROM ranking.sites
           WHERE id = ${id}
           LIMIT 1
         `,
@@ -25,8 +23,8 @@ export class SitesRepository implements ISitesRepository {
       const response = await manager.query(
         `
           SELECT *
-          FROM "site"
-          INNER JOIN "keyword" ON "site"."id"="keyword"."siteId"
+          FROM ranking.sites
+          INNER JOIN ranking.keywords ON "sites"."id"="keywords"."siteid"
         `,
       );
   
@@ -38,7 +36,7 @@ export class SitesRepository implements ISitesRepository {
       await manager
         .createQueryBuilder()
         .insert()
-        .into('site')
+        .into('ranking.sites')
         .values(site)
         .orIgnore()
         .execute();
@@ -79,15 +77,15 @@ export class SitesRepository implements ISitesRepository {
         const manager = getManager();
         const infos:any = await manager.query(
           `
-          SELECT "id" FROM "keyword"
-          WHERE "siteId" =  '${id}'
+          SELECT "id" FROM ranking.keywords
+          WHERE "siteid" =  '${id}'
           `,
           );
           for(var i=0; i < infos.length; i++){
             manager.query(
               `
-              DELETE FROM "position"
-              WHERE "keywordId" =  '${infos[i].id}'
+              DELETE FROM ranking.positions
+              WHERE "keywordid" =  '${infos[i].id}'
               `,
               );
           }
@@ -101,15 +99,15 @@ export class SitesRepository implements ISitesRepository {
       const manager = getManager();
       const infos = await manager.query(
         `
-        SELECT "id" FROM "keyword"
-        WHERE "siteId" =  '${id}'
+        SELECT "id" FROM ranking.keywords
+        WHERE "siteid" =  '${id}'
         `,
         );
         for(var i=0; i < infos.length; i++){
           await manager.query(
             `
-            DELETE FROM "position"
-            WHERE "keywordId" =  '${infos[i].id}'
+            DELETE FROM ranking.positions
+            WHERE "keywordid" =  '${infos[i].id}'
             `,
             );
           
@@ -122,8 +120,8 @@ export class SitesRepository implements ISitesRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-        DELETE FROM "keyword"
-        WHERE "siteId" =  '${id}'
+        DELETE FROM ranking.keywords
+        WHERE "siteid" =  '${id}'
         `,
         );
       return response;
@@ -135,7 +133,7 @@ export class SitesRepository implements ISitesRepository {
       const response = await manager
       .createQueryBuilder()
       .delete()
-      .from('site')
+      .from('ranking.sites')
       .where("id = :id", { id: id })
       .execute();
       return response;
@@ -144,7 +142,7 @@ export class SitesRepository implements ISitesRepository {
     async update(id: string, updateSiteDto:UpdateSiteDto){
       const manager = getManager();
       await manager.createQueryBuilder()
-      .update("site")
+      .update('ranking.sites')
       .set({ url:updateSiteDto.url})
       .where("id = :id", { id: id })
       .execute();

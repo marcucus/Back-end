@@ -4,7 +4,7 @@ export class CreateKeywordDto {
     id:string;
     keywords: string;
     position: string;
-    lastCheck: Date;
+    lastcheck: Date;
     url: string;
-    siteId:Site;
+    siteid:Site;
 }

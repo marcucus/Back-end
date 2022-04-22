@@ -8,7 +8,7 @@ export class UsersRepository implements IUsersRepository {
       const response = await manager.query(
         `
           SELECT *
-          FROM "user"
+          FROM ranking.users
           WHERE id = $1
           LIMIT 1
         `,
@@ -23,7 +23,7 @@ export class UsersRepository implements IUsersRepository {
       const response = await manager.query(
         `
           SELECT *
-          FROM "user"
+          FROM ranking.users
         `,
       );
       return (response as User) || null;
@@ -35,7 +35,7 @@ export class UsersRepository implements IUsersRepository {
       const user:User = await manager.query(
         `
           SELECT *
-          FROM "user"
+          FROM ranking.users
           WHERE email = '${email}'
         `,
       );
@@ -47,7 +47,7 @@ export class UsersRepository implements IUsersRepository {
       await manager
         .createQueryBuilder()
         .insert()
-        .into('user')
+        .into('ranking.users')
         .values(user)
         .orIgnore()
         .execute();

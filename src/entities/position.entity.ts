@@ -2,7 +2,7 @@ import { Keyword } from "./keyword.entity";
 
 export class Position {
     id: string;
-    lastPosition: string;
+    position: string;
     date: Date;
-    keywordId:Keyword;
+    keywordid:Keyword;
 }
