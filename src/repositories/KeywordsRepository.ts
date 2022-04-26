@@ -4,8 +4,10 @@ import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
 import { CheckKeywordDto } from 'src/dto/keywords/check-keyword.dto';
+import { HttpService } from '@nestjs/common';
 
 export class KeywordsRepository implements IKeywordsRepository {
+  private http: HttpService;
     async findOne(id: string): Promise<Keyword| null> {
       const manager = getManager();
       const response = await manager.query(
@@ -27,13 +29,12 @@ export class KeywordsRepository implements IKeywordsRepository {
         `
           SELECT ranking.keywords.id,ranking.keywords.keywords,ranking.positions.lastposition,ranking.positions.date
           FROM ranking.positions
-          INNER JOIN ranking.keywords ON ranking.positions.keywordid= ranking.keywords.id 
+          INNER JOIN ranking.keywords ON ranking.positions.keywordid=ranking.keywords.id 
         `,
       );
   
       return (response as Keyword) || null;
     }
-    
 
     async create(keyword: CreateKeywordDto): Promise<Keyword> {
       const manager = getManager();
@@ -88,6 +89,18 @@ export class KeywordsRepository implements IKeywordsRepository {
           WHERE id = '${id}'
         `
         );
+        const infos = await manager.query(
+          `
+            SELECT ranking.keywords.keywords, ranking.sites.url
+            FROM ranking.keywords
+            INNER JOIN ranking.sites ON ranking.keywords.siteid = ranking.sites.id 
+            WHERE ranking.keywords.id = '${id}'
+          `
+          );
+        console.log(infos);
+        this.http.get<any>(`https://www.whole-search.com/Google/fr-fr/index.asp?keyword=${infos.keywords}&domain=${infos.url}`).subscribe((response) => {
+          console.log(response);
+        });
         this.upCreatePos(id,keyword);
         this.addRequest();
       return response;
