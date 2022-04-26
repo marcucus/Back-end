@@ -4,7 +4,11 @@ import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
 import { CheckKeywordDto } from 'src/dto/keywords/check-keyword.dto';
-import { HttpService } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import axios from 'axios';
+import { catchError, map } from 'rxjs';
+import { url } from 'inspector';
 
 export class KeywordsRepository implements IKeywordsRepository {
   private http: HttpService;
@@ -98,9 +102,37 @@ export class KeywordsRepository implements IKeywordsRepository {
           `
           );
         console.log(infos);
-        this.http.get<any>(`https://www.whole-search.com/Google/fr-fr/index.asp?keyword=${infos.keywords}&domain=${infos.url}`).subscribe((response) => {
-          console.log(response);
+console.log(infos[0].keywords);
+var urltest ='';
+var url ='';
+          if(infos[0].url.startsWith('http://'))
+          {
+            urltest = infos[0].url.slice(0,7);
+          }
+          else if(infos[0].url.startsWith('https://'))
+          {
+            urltest = infos[0].url.slice(0,8)
+          }
+          else {
+            urltest = infos[0].url;
+          }
+          if (!urltest.startsWith('www.'))
+          {
+            url = "www."+urltest;
+          }
+          console.log(url);
+//console.log(infos[0].url);
+        const checkWhole = axios.post(`https://www.whole-search.com/Google/fr-fr/index.asp?keyword=${infos[0].keywords}&domain=${url}`)
+        .then(function (response) {
+          // handle success
+            console.log(response);
+          }
+        )
+        .catch(function (error) {
+          // handle error
+          console.log(error);
         });
+        console.log(checkWhole)
         this.upCreatePos(id,keyword);
         this.addRequest();
       return response;
