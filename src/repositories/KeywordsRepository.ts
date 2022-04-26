@@ -12,6 +12,7 @@ import { url } from 'inspector';
 
 export class KeywordsRepository implements IKeywordsRepository {
   private http: HttpService;
+  private puppeteer = require('puppeteer');
     async findOne(id: string): Promise<Keyword| null> {
       const manager = getManager();
       const response = await manager.query(
@@ -121,8 +122,10 @@ var url ='';
             url = "www."+urltest;
           }
           console.log(url);
-//console.log(infos[0].url);
-        const checkWhole = axios.post(`https://www.whole-search.com/Google/fr-fr/index.asp?keyword=${infos[0].keywords}&domain=${url}`)
+       /* const checkWhole = axios.get(`https://www.whole-search.com/Google/fr-fr/index.asp`, {
+          keyword: `${infos[0].keywords}`,
+          domain: `${url}`
+        })
         .then(function (response) {
           // handle success
             console.log(response);
@@ -132,7 +135,23 @@ var url ='';
           // handle error
           console.log(error);
         });
-        console.log(checkWhole)
+        console.log(checkWhole)*/
+        
+          const browser = await this.puppeteer.launch();
+          const page = await browser.newPage();
+        
+          await page.goto(`https://www.whole-search.com/Google/fr-fr/index.asp?keyword=${infos[0].keywords}&domain=${url}`);
+
+          await page.click('#js_button_go');
+        
+          // example: get innerHTML of an element
+          const someContent = await page.$(".p-nowrap");
+          const text = await (await someContent.getProperty('textContent')).jsonValue()
+        
+          // Use Promise.all to wait for two actions (navigation and click)
+
+
+        console.log(text);
         this.upCreatePos(id,keyword);
         this.addRequest();
       return response;
@@ -150,7 +169,7 @@ var url ='';
       const response = await manager.query(
         `
           UPDATE ranking.request
-          SET number = number+1
+          SET number=number+1
         `
         );
         return response;
