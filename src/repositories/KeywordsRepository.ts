@@ -133,7 +133,30 @@ export class KeywordsRepository implements IKeywordsRepository {
           console.log(error);
         });
         console.log(checkWhole)*/
-        await this.checkPage(infos,url)
+        const browser = await this.puppeteer.launch();
+        const page = await browser.newPage();
+        await page.setDefaultNavigationTimeout(0);
+        await page.goto(`https://www.whole-search.com`);
+        await page.type('#keyword', `${infos[0].keywords}`);
+        await page.type('#domain', `${url}`);
+        page.waitForSelector('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
+        await page.click('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
+        //await page.screenshot({ path: 'button.png', fullPage: true });
+
+        /*// example: get innerHTML of an element
+        const someContent = await page.$('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
+        const text = await (await someContent.getProperty('textContent')).jsonValue();
+      
+        // Use Promise.all to wait for two actions (navigation and click)*/
+
+        //await page.waitForSelector('.table');
+        await page.waitForSelector('.table');
+        const element = await page.$("td > p.p-nowrap");
+        //let text = await page.evaluate(el => el.textContent, element)
+        const text = await (await element.getProperty('textContent')).jsonValue();
+        await page.close();
+        console.log(text);
+
         await this.upCreatePos(id,keyword);
         await this.addRequest();
       return response;
@@ -147,6 +170,7 @@ export class KeywordsRepository implements IKeywordsRepository {
           await page.goto(`https://www.whole-search.com`);
           await page.type('#keyword', `${infos[0].keywords}`);
           await page.type('#domain', `${url}`);
+          page.waitForSelector('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
           await page.click('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
           //await page.screenshot({ path: 'button.png', fullPage: true });
  
@@ -157,9 +181,11 @@ export class KeywordsRepository implements IKeywordsRepository {
           // Use Promise.all to wait for two actions (navigation and click)*/
 
           //await page.waitForSelector('.table');
-          const element = await page.$("[class='table']");
-          const text = await (await element.getProperty('textContent')).jsonValue()
-          console.log(text);
+          await page.waitForSelector('p.p-nowrap');
+          const element = await page.$eval("p.p-nowrap");
+          //let text = await page.evaluate(el => el.textContent, element)
+          //const text = await (await element.getProperty('textContent')).jsonValue()
+          console.log(element);
     }
 
     async addRequest(){
