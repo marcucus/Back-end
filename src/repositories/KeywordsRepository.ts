@@ -102,10 +102,8 @@ export class KeywordsRepository implements IKeywordsRepository {
             WHERE ranking.keywords.id = '${id}'
           `
           );
-        console.log(infos);
-console.log(infos[0].keywords);
-var urltest ='';
-var url ='';
+            var urltest ='';
+            var url ='';
           if(infos[0].url.startsWith('http://'))
           {
             urltest = infos[0].url.slice(0,7);
@@ -121,7 +119,6 @@ var url ='';
           {
             url = "www."+urltest;
           }
-          console.log(url);
        /* const checkWhole = axios.get(`https://www.whole-search.com/Google/fr-fr/index.asp`, {
           keyword: `${infos[0].keywords}`,
           domain: `${url}`
@@ -136,25 +133,33 @@ var url ='';
           console.log(error);
         });
         console.log(checkWhole)*/
-        
+        await this.checkPage(infos,url)
+        await this.upCreatePos(id,keyword);
+        await this.addRequest();
+      return response;
+    }
+
+    async checkPage(infos, url)
+    {
           const browser = await this.puppeteer.launch();
           const page = await browser.newPage();
+          await page.setDefaultNavigationTimeout(0);
+          await page.goto(`https://www.whole-search.com`);
+          await page.type('#keyword', `${infos[0].keywords}`);
+          await page.type('#domain', `${url}`);
+          await page.click('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
+          //await page.screenshot({ path: 'button.png', fullPage: true });
+ 
+          /*// example: get innerHTML of an element
+          const someContent = await page.$('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
+          const text = await (await someContent.getProperty('textContent')).jsonValue();
         
-          await page.goto(`https://www.whole-search.com/Google/fr-fr/index.asp?keyword=${infos[0].keywords}&domain=${url}`);
+          // Use Promise.all to wait for two actions (navigation and click)*/
 
-          await page.click('#js_button_go');
-        
-          // example: get innerHTML of an element
-          const someContent = await page.$(".p-nowrap");
-          const text = await (await someContent.getProperty('textContent')).jsonValue()
-        
-          // Use Promise.all to wait for two actions (navigation and click)
-
-
-        console.log(text);
-        this.upCreatePos(id,keyword);
-        this.addRequest();
-      return response;
+          //await page.waitForSelector('.table');
+          const element = await page.$("[class='table']");
+          const text = await (await element.getProperty('textContent')).jsonValue()
+          console.log(text);
     }
 
     async addRequest(){
