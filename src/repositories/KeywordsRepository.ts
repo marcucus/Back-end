@@ -1,14 +1,9 @@
 import { IKeywordsRepository } from '../interfaces/IKeywordsRepository';
-import { getManager, Timestamp } from 'typeorm';
+import { getManager } from 'typeorm';
 import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
-import { CheckKeywordDto } from 'src/dto/keywords/check-keyword.dto';
-import { HttpException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import axios from 'axios';
-import { catchError, map } from 'rxjs';
-import { url } from 'inspector';
 
 export class KeywordsRepository implements IKeywordsRepository {
   private http: HttpService;
@@ -58,14 +53,14 @@ export class KeywordsRepository implements IKeywordsRepository {
       return keyword;
     }
 
-    async upCreatePos(id:string, keyword : CheckKeywordDto)
+    async upCreatePos(id,position)
     {
       const manager = getManager();
       const response = await manager.query(
         `
           INSERT INTO ranking.positions ("lastposition","keywordid","date")
           VALUES (
-            '${keyword.lastposition}',
+            '${position}',
             '${id}',
             NOW()::TIMESTAMP
           );
@@ -85,15 +80,17 @@ export class KeywordsRepository implements IKeywordsRepository {
         return response;
     }
 
-    async checkPos(id: string, keyword: CheckKeywordDto){
+    async checkPos(id: string){
+      var urltest ='';
+      var url ='';
       const manager = getManager();
-      const response = await manager.query(
+      const lastPosition = await manager.query(
         `
-          UPDATE ranking.keywords 
-          SET lastcheck = NOW()::TIMESTAMP, position = '${keyword.position}'
+          SELECT *
+          FROM ranking.keywords
           WHERE id = '${id}'
         `
-        );
+      );
         const infos = await manager.query(
           `
             SELECT ranking.keywords.keywords, ranking.sites.url
@@ -101,9 +98,7 @@ export class KeywordsRepository implements IKeywordsRepository {
             INNER JOIN ranking.sites ON ranking.keywords.siteid = ranking.sites.id 
             WHERE ranking.keywords.id = '${id}'
           `
-          );
-            var urltest ='';
-            var url ='';
+        );
           if(infos[0].url.startsWith('http://'))
           {
             urltest = infos[0].url.slice(0,7);
@@ -119,70 +114,56 @@ export class KeywordsRepository implements IKeywordsRepository {
           {
             url = "www."+urltest;
           }
-       /* const checkWhole = axios.get(`https://www.whole-search.com/Google/fr-fr/index.asp`, {
-          keyword: `${infos[0].keywords}`,
-          domain: `${url}`
-        })
-        .then(function (response) {
-          // handle success
-            console.log(response);
-          }
-        )
-        .catch(function (error) {
-          // handle error
-          console.log(error);
-        });
-        console.log(checkWhole)*/
-        await this.checkPage(infos,url);
-        await this.upCreatePos(id,keyword);
+        let position = lastPosition[0].position;
+        const updatedPost = await this.checkPage(infos,url);
+        await this.upCreatePos(id,position);
         await this.addRequest();
+
+        const response = await manager.query(
+          `
+            UPDATE ranking.keywords 
+            SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
+            WHERE id = '${id}'
+          `
+          );
+
       return response;
     }
 
     async checkPage(infos, url)
     {
-          const browser = await this.puppeteer.launch();
-          const page = await browser.newPage();
-          await page.setDefaultNavigationTimeout(0);
-          await page.goto(`https://www.whole-search.com`);
-          await page.type('#keyword', `${infos[0].keywords}`);
-          await page.type('#domain', `${url}`);
-          page.waitForSelector('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
-          await page.click('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
-          //await page.screenshot({ path: 'button.png', fullPage: true });
- 
-          /*// example: get innerHTML of an element
-          const someContent = await page.$('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
-          const text = await (await someContent.getProperty('textContent')).jsonValue();
-        
-          // Use Promise.all to wait for two actions (navigation and click)*/
+      let nb=0;
 
-          await page.waitForSelector('.table');
-          //await page.waitForSelector('p.p-nowrap');
-          //let text = await page.$eval(el => el.textContent, element)
-          //let text = await page.$$eval(selector, am => am.filter(e => e.href).map(e => e.href))
-          //const text = await (await element.getProperty('textContent')).jsonValue()
+      const browser = await this.puppeteer.launch();
+      const page = await browser.newPage();
+      await page.setDefaultNavigationTimeout(0);
+      await page.goto(`https://www.whole-search.com`);
+      await page.type('#keyword', `${infos[0].keywords}`);
+      await page.type('#domain', `${url}`);
 
-          function extractItems() {
-            const extractedElements = document.querySelectorAll('p.p-nowrap');
-            const items = [];
-            for (let element of extractedElements) {
-              items.push(element.textContent);
-            }
-            return items;
-          }
-          
-          let items = await page.evaluate(extractItems);
+      page.waitForSelector('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
+      await page.click('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
+      await page.waitForSelector('.table');
 
-          let nb=0;
-          for(let i=0; i<items.length; i++){
-            let nb =+ parseInt(items[i]); 
-          }
-          let moyenne = nb/items.length;
+      function extractItems() {
+        const extractedElements = document.querySelectorAll('p.p-nowrap');
+        const items = [];
+        for (let element of extractedElements) {
+          items.push(element.textContent);
+        }
+        return items;
+      }
+      
+      let items = await page.evaluate(extractItems);
 
-          console.log(moyenne);
-          
-          await page.close();
+        for(let i=0; i<items.length; i++){
+          nb += parseInt(items[i]); 
+        }
+
+      let moyenne = nb/items.length;
+      await page.close();
+
+      return moyenne;
     }
 
     async addRequest(){
@@ -193,7 +174,7 @@ export class KeywordsRepository implements IKeywordsRepository {
           FROM ranking.request
         `
       );
-      if(nbRequest.number<=199){
+      if(nbRequest[0].number<=199){
       const response = await manager.query(
         `
           UPDATE ranking.request
@@ -207,7 +188,7 @@ export class KeywordsRepository implements IKeywordsRepository {
         const response = await manager.query(
           `
             UPDATE ranking.request
-            SET number = 0
+            SET number=0
           `
           );
           return response;

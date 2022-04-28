@@ -35,8 +35,8 @@ export class KeywordsController {
 
   @UseGuards(JwtAuthGuard)
   @Put('check/:id')
-  check(@Param('id') id: string, @Body() updateKeywordDto: CheckKeywordDto) {
-    return this.keywordsService.check(id, updateKeywordDto);
+  check(@Param('id') id: string) {
+    return this.keywordsService.check(id);
   }
 
   @UseGuards(JwtAuthGuard)
