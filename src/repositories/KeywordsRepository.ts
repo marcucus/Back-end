@@ -41,10 +41,11 @@ export class KeywordsRepository implements IKeywordsRepository {
       const relatedKeyword = keyword.keywords.replace(/\s/g,"+")
       await manager.query(
         `
-          INSERT INTO ranking.keywords ("position","keywords","siteid","lastcheck")
+          INSERT INTO ranking.keywords ("position","keywords","country","siteid","lastcheck")
           VALUES (
             '${keyword.position}',
             '${relatedKeyword}',
+            '${keyword.country}',
             '${keyword.siteid}',
             NOW()::TIMESTAMP
           );
