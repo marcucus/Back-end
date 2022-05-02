@@ -4,6 +4,7 @@ import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
 import { HttpService } from '@nestjs/axios';
+import { ConsoleLogger } from '@nestjs/common';
 
 export class KeywordsRepository implements IKeywordsRepository {
   private http: HttpService;
@@ -39,7 +40,7 @@ export class KeywordsRepository implements IKeywordsRepository {
     async create(keyword: CreateKeywordDto): Promise<Keyword> {
       const manager = getManager();
       const relatedKeyword = keyword.keywords.replace(/\s/g,"+")
-      await manager.query(
+      const e = await manager.query(
         `
           INSERT INTO ranking.keywords ("position","keywords","country","siteid","lastcheck")
           VALUES (
@@ -51,7 +52,8 @@ export class KeywordsRepository implements IKeywordsRepository {
           );
         `
       );
-      return keyword;
+      console.log(e);
+      return e;
     }
 
     async upCreatePos(id,position)
@@ -94,7 +96,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       );
         const infos = await manager.query(
           `
-            SELECT ranking.keywords.keywords, ranking.sites.url
+            SELECT ranking.keywords.keywords, ranking.keywords.country, ranking.sites.url
             FROM ranking.keywords
             INNER JOIN ranking.sites ON ranking.keywords.siteid = ranking.sites.id 
             WHERE ranking.keywords.id = '${id}'
@@ -117,6 +119,7 @@ export class KeywordsRepository implements IKeywordsRepository {
           }
         let position = lastPosition[0].position;
         const updatedPost = await this.checkPage(infos,url);
+        if(infos[0].position)
         await this.upCreatePos(id,position);
         await this.addRequest();
 
@@ -138,9 +141,10 @@ export class KeywordsRepository implements IKeywordsRepository {
       const browser = await this.puppeteer.launch();
       const page = await browser.newPage();
       await page.setDefaultNavigationTimeout(0);
-      await page.goto(`https://www.whole-search.com`);
+      await page.goto(`https://www.whole-search.com/c/`);
       await page.type('#keyword', `${infos[0].keywords}`);
       await page.type('#domain', `${url}`);
+      await page.click(`#${infos[0].country}`);
 
       page.waitForSelector('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
       await page.click('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
@@ -163,7 +167,6 @@ export class KeywordsRepository implements IKeywordsRepository {
 
       let moyenne = nb/items.length;
       await page.close();
-
       return moyenne;
     }
 

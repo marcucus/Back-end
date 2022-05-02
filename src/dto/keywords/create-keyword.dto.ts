@@ -5,7 +5,7 @@ export class CreateKeywordDto {
     keywords: string;
     position: string;
     country:string;
+    url:string;
     lastcheck: Date;
-    url: string;
     siteid:Site;
 }

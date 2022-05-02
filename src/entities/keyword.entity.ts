@@ -4,6 +4,7 @@ export class Keyword {
     keywords: string;
     position: string;
     country:string;
+    url:string;
     lastcheck: Date;
     siteid: Site;
 }
