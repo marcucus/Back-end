@@ -3,11 +3,8 @@ import { getManager } from 'typeorm';
 import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
-import { HttpService } from '@nestjs/axios';
-import { ConsoleLogger } from '@nestjs/common';
 
 export class KeywordsRepository implements IKeywordsRepository {
-  private http: HttpService;
   private puppeteer = require('puppeteer');
     async findOne(id: string): Promise<Keyword| null> {
       const manager = getManager();
@@ -42,17 +39,17 @@ export class KeywordsRepository implements IKeywordsRepository {
       const relatedKeyword = keyword.keywords.replace(/\s/g,"+")
       const e = await manager.query(
         `
-          INSERT INTO ranking.keywords ("position","keywords","country","siteid","lastcheck")
+          INSERT INTO ranking.keywords ("keywords","country","siteid","lastcheck")
           VALUES (
-            '${keyword.position}',
             '${relatedKeyword}',
             '${keyword.country}',
             '${keyword.siteid}',
             NOW()::TIMESTAMP
-          );
+          ) 
+          RETURNING ranking.keywords.id;
         `
       );
-      console.log(e);
+      await this.checkPos(e[0].id);
       return e;
     }
 
@@ -119,19 +116,27 @@ export class KeywordsRepository implements IKeywordsRepository {
           }
         let position = lastPosition[0].position;
         const updatedPost = await this.checkPage(infos,url);
-        if(infos[0].position)
-        await this.upCreatePos(id,position);
+        if(position == undefined || position == null){
+          await manager.query(
+            `
+              UPDATE ranking.keywords 
+              SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
+              WHERE id = '${id}'
+            `
+            );
+        }
+        else 
+        {
+          await this.upCreatePos(id,position);
+          const response = await manager.query(
+            `
+              UPDATE ranking.keywords 
+              SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
+              WHERE id = '${id}'
+            `
+            );
+        }
         await this.addRequest();
-
-        const response = await manager.query(
-          `
-            UPDATE ranking.keywords 
-            SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
-            WHERE id = '${id}'
-          `
-          );
-
-      return response;
     }
 
     async checkPage(infos, url)
