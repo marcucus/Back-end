@@ -30,11 +30,7 @@ export class AuthService {
         const user = await this.userService.infoByEmail(email);
         const id:string = user[0].id;
         const token = await this.userService.getBearerToken(id,email);
-      return {
-        message: 'User Info from Google',
-        user: req.user,
-        token:token,
-        }
+      return token;
       }
     }
 

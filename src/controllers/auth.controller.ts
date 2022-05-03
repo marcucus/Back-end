@@ -1,4 +1,4 @@
-import {Controller, Get, Req, UseGuards } from '@nestjs/common';
+import {Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -21,6 +21,14 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('/profile')
   getProfile(@Req() req) {
+    return req.user;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/logout')
+  logout(@Req() req) {
+    req.logout();
+    req.destroy();
     return req.user;
   }
 
