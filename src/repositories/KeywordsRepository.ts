@@ -3,6 +3,7 @@ import { getManager } from 'typeorm';
 import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
+import { request } from 'http';
 
 export class KeywordsRepository implements IKeywordsRepository {
   private puppeteer = require('puppeteer');
@@ -115,7 +116,7 @@ export class KeywordsRepository implements IKeywordsRepository {
             url = "www."+urltest;
           }
         let position = lastPosition[0].position;
-        const updatedPost = await this.checkPage(infos,url);
+        /*const updatedPost = await this.checkPage(infos,url);
         if(position == undefined || position == null){
           await manager.query(
             `
@@ -136,7 +137,8 @@ export class KeywordsRepository implements IKeywordsRepository {
             `
             );
         }
-        await this.addRequest();
+        await this.addRequest();*/
+        await this.resetProxy();
     }
 
     async checkPage(infos, url)
@@ -206,7 +208,13 @@ export class KeywordsRepository implements IKeywordsRepository {
     }
 
     async resetProxy(){
-
+      var extractedElements:any;
+      request("http://proxy.webshare.io/proxy/list/download/rmueexqjeanrzdnxljjrgmihikdhzvysbvhauxoo/-/http/username/direct/", el =>extractedElements);
+      const items = [];
+      for (let element of extractedElements) {
+        items.push(element.textContent);
+      }
+      console.log(items);
     }
 
     async delete(id: string){
