@@ -3,10 +3,14 @@ import { getManager } from 'typeorm';
 import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
-import { request } from 'http';
+import { REQUEST } from '@nestjs/core';
+import { HttpService } from '@nestjs/axios';
+import { XMLHttpRequest } from 'xhr2';
+import { request, Request } from 'express';
 
 export class KeywordsRepository implements IKeywordsRepository {
   private puppeteer = require('puppeteer');
+  private http:HttpService;
     async findOne(id: string): Promise<Keyword| null> {
       const manager = getManager();
       const response = await manager.query(
@@ -208,13 +212,18 @@ export class KeywordsRepository implements IKeywordsRepository {
     }
 
     async resetProxy(){
-      var extractedElements:any;
+      request.get("https://proxy.webshare.io/api/profile/")
+      request.header("authorization : d108471eaedd8a803c3cbc15e2516704608f942c") 
+      request.set('Content-Type', 'text/html');     
+      //request.get("authorization", "d108471eaedd8a803c3cbc15e2516704608f942c");
+      //requests.send(new Blob());
+      /*var extractedElements:any;
       request("http://proxy.webshare.io/proxy/list/download/rmueexqjeanrzdnxljjrgmihikdhzvysbvhauxoo/-/http/username/direct/", el =>extractedElements);
       const items = [];
       for (let element of extractedElements) {
         items.push(element.textContent);
-      }
-      console.log(items);
+      }*/
+      console.log(request);
     }
 
     async delete(id: string){
