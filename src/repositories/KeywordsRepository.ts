@@ -6,6 +6,8 @@ import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
 import { REQUEST } from '@nestjs/core';
 import { HttpService } from '@nestjs/axios';
 import { XMLHttpRequest } from 'xhr2';
+import 'cross-fetch/polyfill';
+import https from 'https';
 import { request, Request } from 'express';
 
 export class KeywordsRepository implements IKeywordsRepository {
@@ -212,9 +214,19 @@ export class KeywordsRepository implements IKeywordsRepository {
     }
 
     async resetProxy(){
-      request.get("https://proxy.webshare.io/api/profile/")
-      request.header("authorization : d108471eaedd8a803c3cbc15e2516704608f942c") 
-      request.set('Content-Type', 'text/html');     
+      const https = require('https');
+      var headers: HeadersInit = {Authorization : "d108471eaedd8a803c3cbc15e2516704608f942c"};
+      https.get('https://proxy.webshare.io/api/proxy/list/',{method:'GET',headers, mode:'cors',cache:'default'},(response) => {
+        var result = ''
+          response.on('data', function (chunk) {
+            result += chunk;
+        });
+          response.on('end', function () {
+            console.log(result);
+        });
+      });    
+      //request.get("https://proxy.webshare.io/api/profile/")
+      //request.header("authorization : d108471eaedd8a803c3cbc15e2516704608f942c")      
       //request.get("authorization", "d108471eaedd8a803c3cbc15e2516704608f942c");
       //requests.send(new Blob());
       /*var extractedElements:any;
@@ -223,7 +235,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       for (let element of extractedElements) {
         items.push(element.textContent);
       }*/
-      console.log(request);
+      //console.log(request);
     }
 
     async delete(id: string){
