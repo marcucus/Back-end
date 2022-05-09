@@ -8,7 +8,7 @@ import { HttpService } from '@nestjs/axios';
 import { XMLHttpRequest } from 'xhr2';
 import 'cross-fetch/polyfill';
 import https from 'https';
-import { request, Request } from 'express';
+import { json, request, Request } from 'express';
 
 export class KeywordsRepository implements IKeywordsRepository {
   private puppeteer = require('puppeteer');
@@ -215,16 +215,31 @@ export class KeywordsRepository implements IKeywordsRepository {
 
     async resetProxy(){
       const https = require('https');
+      var i;
+      var test;
       var headers: HeadersInit = {Authorization : "d108471eaedd8a803c3cbc15e2516704608f942c"};
-      https.get('https://proxy.webshare.io/api/proxy/list/',{method:'GET',headers, mode:'cors',cache:'default'},(response) => {
-        var result = ''
+      fetch("https://proxy.webshare.io/api/proxy/list/", {method:"GET", headers:headers})
+      .then(function(response){
+        var tests = response.json();
+        console.log(tests);
+        tests.then(function(testss){
+          console.log(testss.results[i]);
+          i++;
+        })
+      });
+      
+      /*test.fetch('https://proxy.webshare.io/api/proxy/list/',{method:'GET',headers},(response) => {
+        var result='';
           response.on('data', function (chunk) {
             result += chunk;
         });
           response.on('end', function () {
-            console.log(result);
+            console.log(JSON.stringify(result));
         });
-      });    
+      }).then((res) => {
+        console.log(res.data);
+        return res.data;
+  });; 
       //request.get("https://proxy.webshare.io/api/profile/")
       //request.header("authorization : d108471eaedd8a803c3cbc15e2516704608f942c")      
       //request.get("authorization", "d108471eaedd8a803c3cbc15e2516704608f942c");

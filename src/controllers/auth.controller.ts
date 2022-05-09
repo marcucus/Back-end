@@ -15,7 +15,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
-    return this.authService.googleLogin(req)
+    return this.authService.googleLogin(req);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -24,12 +24,9 @@ export class AuthController {
     return req.user;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('/logout')
   logout(@Req() req) {
-    req.logout();
     req.destroy();
-    return req.user;
   }
 
 }
