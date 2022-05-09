@@ -214,19 +214,31 @@ export class KeywordsRepository implements IKeywordsRepository {
     }
 
     async resetProxy(){
-      const https = require('https');
-      var i;
-      var test;
+      const manager = getManager();
+      var i = await manager.query(
+        `
+          SELECT proxy
+          FROM ranking.request
+        `
+      );;
+      var nb = i[0].proxy;
+      console.log(nb);
       var headers: HeadersInit = {Authorization : "d108471eaedd8a803c3cbc15e2516704608f942c"};
       fetch("https://proxy.webshare.io/api/proxy/list/", {method:"GET", headers:headers})
       .then(function(response){
         var tests = response.json();
         console.log(tests);
         tests.then(function(testss){
-          console.log(testss.results[i]);
-          i++;
+          console.log(testss.results[nb]);
         })
       });
+      const response = await manager.query(
+        `
+          UPDATE ranking.request
+          SET proxy=proxy+1
+        `
+        );
+        
       
       /*test.fetch('https://proxy.webshare.io/api/proxy/list/',{method:'GET',headers},(response) => {
         var result='';

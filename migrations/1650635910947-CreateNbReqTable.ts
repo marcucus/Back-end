@@ -6,6 +6,12 @@ export class CreateNbReqTable1650635910947 implements MigrationInterface {
         return queryRunner.query(
             `CREATE TABLE IF NOT EXISTS ranking.request (
                 number int4
+                proxy int4
+              );
+              INSERT INTO ranking.request ("number","proxy")
+              VALUES (
+                0,
+                0
               );
             `,
           );
