@@ -88,6 +88,9 @@ export class KeywordsRepository implements IKeywordsRepository {
     }
 
     async checkPos(id: string){
+      var info = await this.infoProxy();
+      console.log(info);
+      /*await this.addRequest();
       var urltest ='';
       var url ='';
       const manager = getManager();
@@ -122,8 +125,13 @@ export class KeywordsRepository implements IKeywordsRepository {
             url = "www."+urltest;
           }
         let position = lastPosition[0].position;
-        /*const updatedPost = await this.checkPage(infos,url);
+        const updatedPost = await this.checkPage(infos,url);
         if(position == undefined || position == null){
+          console.log("Error");
+        }
+        else 
+        {
+          await this.upCreatePos(id,position);
           await manager.query(
             `
               UPDATE ranking.keywords 
@@ -131,28 +139,24 @@ export class KeywordsRepository implements IKeywordsRepository {
               WHERE id = '${id}'
             `
             );
-        }
-        else 
-        {
-          await this.upCreatePos(id,position);
-          const response = await manager.query(
-            `
-              UPDATE ranking.keywords 
-              SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
-              WHERE id = '${id}'
-            `
-            );
-        }
-        await this.addRequest();*/
-        await this.resetProxy();
+        }*/
     }
 
     async checkPage(infos, url)
     {
       let nb=0;
+      const browser = await this.puppeteer.launch({
+        args: [ 
+                `--proxy-server=45.140.13.119:9132`
+              ]
+      });
 
-      const browser = await this.puppeteer.launch();
       const page = await browser.newPage();
+      await page.authenticate({
+        username:'mvmpjhlg',
+        password:'6zffjqyvf6fp',
+      })
+
       await page.setDefaultNavigationTimeout(0);
       await page.goto(`https://www.whole-search.com/c/`);
       await page.type('#keyword', `${infos[0].keywords}`);
@@ -215,29 +219,31 @@ export class KeywordsRepository implements IKeywordsRepository {
 
     async resetProxy(){
       const manager = getManager();
-      var i = await manager.query(
+      const nbprox = manager.query(
         `
           SELECT proxy
           FROM ranking.request
         `
-      );;
-      var nb = i[0].proxy;
-      console.log(nb);
-      var headers: HeadersInit = {Authorization : "d108471eaedd8a803c3cbc15e2516704608f942c"};
-      fetch("https://proxy.webshare.io/api/proxy/list/", {method:"GET", headers:headers})
-      .then(function(response){
-        var tests = response.json();
-        console.log(tests);
-        tests.then(function(testss){
-          console.log(testss.results[nb]);
-        })
-      });
-      const response = await manager.query(
+      );
+      if(nbprox[0].proxy <= 9)
+      {
+        await manager.query(
         `
           UPDATE ranking.request
           SET proxy=proxy+1
         `
         );
+      }
+      else{
+        this.resetProxyList();
+        await manager.query(
+          `
+            UPDATE ranking.request
+            SET proxy=0
+          `
+          );
+      }
+
         
       
       /*test.fetch('https://proxy.webshare.io/api/proxy/list/',{method:'GET',headers},(response) => {
@@ -263,6 +269,37 @@ export class KeywordsRepository implements IKeywordsRepository {
         items.push(element.textContent);
       }*/
       //console.log(request);
+    }
+
+    async resetProxyList(){
+      var headers: HeadersInit = {Authorization : "d108471eaedd8a803c3cbc15e2516704608f942c"};
+      fetch("https://proxy.webshare.io/api/proxy/replacement/", {method:"GET", headers:headers})
+      .then(function(response){
+        var proxy = response.json();
+        console.log(proxy);
+      });
+    }
+
+    async infoProxy(){
+      var infoProx;
+      const manager = getManager();
+      var i = await manager.query(
+        `
+          SELECT proxy
+          FROM ranking.request
+        `
+      );
+      var nb = i[0].proxy;
+
+      var headers: HeadersInit = {Authorization : "d108471eaedd8a803c3cbc15e2516704608f942c"};
+      fetch("https://proxy.webshare.io/api/proxy/list/", {method:"GET", headers:headers})
+        .then(function(response){
+          var proxy = response.json();
+          proxy.then(function(proxys){
+            var infoProx = proxys.results[nb];
+          })
+        });
+      return infoProx;
     }
 
     async delete(id: string){
