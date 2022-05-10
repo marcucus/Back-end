@@ -88,9 +88,7 @@ export class KeywordsRepository implements IKeywordsRepository {
     }
 
     async checkPos(id: string){
-      var info = await this.infoProxy();
-      console.log(info);
-      /*await this.addRequest();
+      await this.addRequest();
       var urltest ='';
       var url ='';
       const manager = getManager();
@@ -139,22 +137,23 @@ export class KeywordsRepository implements IKeywordsRepository {
               WHERE id = '${id}'
             `
             );
-        }*/
+        }
     }
 
     async checkPage(infos, url)
     {
+      var info = await this.infoProxy();
       let nb=0;
       const browser = await this.puppeteer.launch({
         args: [ 
-                `--proxy-server=45.140.13.119:9132`
+                `--proxy-server=${info.proxy_address}:${info.ports.http}`
               ]
       });
 
       const page = await browser.newPage();
       await page.authenticate({
-        username:'mvmpjhlg',
-        password:'6zffjqyvf6fp',
+        username:`${info.username}`,
+        password:`${info.password}`,
       })
 
       await page.setDefaultNavigationTimeout(0);
@@ -281,7 +280,7 @@ export class KeywordsRepository implements IKeywordsRepository {
     }
 
     async infoProxy(){
-      var infoProx;
+
       const manager = getManager();
       var i = await manager.query(
         `
@@ -292,14 +291,10 @@ export class KeywordsRepository implements IKeywordsRepository {
       var nb = i[0].proxy;
 
       var headers: HeadersInit = {Authorization : "d108471eaedd8a803c3cbc15e2516704608f942c"};
-      fetch("https://proxy.webshare.io/api/proxy/list/", {method:"GET", headers:headers})
-        .then(function(response){
-          var proxy = response.json();
-          proxy.then(function(proxys){
-            var infoProx = proxys.results[nb];
-          })
-        });
-      return infoProx;
+      const response = await fetch("https://proxy.webshare.io/api/proxy/list/", {method:"GET", headers:headers});
+      const data = await response.json();
+
+      return data.results[nb];
     }
 
     async delete(id: string){
