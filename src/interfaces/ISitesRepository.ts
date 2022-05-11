@@ -5,7 +5,7 @@ import { DeleteResult } from "typeorm";
 export interface ISitesRepository {
     findOne(id: string): Promise<Site | null>;
     find(): Promise<Site| null>;
-    create(site: Site): Promise<Site>;
+    create(site: Site, req): Promise<Site>;
     update(id: string, updateSiteDto:UpdateSiteDto): Promise<void>;
     delete(id: string): Promise<void>;
     delPos(id: string): Promise<any>;

@@ -7,7 +7,7 @@ export class JwtAuthService {
   constructor(private jwtStrategy: JwtStrategy) {}
 
   login(loggUser: any) {
-    const payload: JwtPayload = { id: loggUser.id, email: loggUser.email };
+    const payload: JwtPayload = { sub: loggUser.id, email: loggUser.email };
     return {
       accessToken: this.jwtStrategy.validate(payload),
     };

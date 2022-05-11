@@ -2,8 +2,13 @@ import { ISitesRepository } from '../interfaces/ISitesRepository';
 import { getManager } from 'typeorm';
 import { Site } from 'src/entities/site.entity';
 import { UpdateSiteDto } from 'src/dto/sites/update-site.dto';
+import { JwtService } from '@nestjs/jwt';
 
 export class SitesRepository implements ISitesRepository {
+  private JwtService = new JwtService({
+    secret: process.env.ACCESS_SECRET,
+    signOptions: { expiresIn: '7d' },
+  });
     async findOne(id: string): Promise<Site| null> {
       const manager = getManager();
       const response = await manager.query(
@@ -31,16 +36,24 @@ export class SitesRepository implements ISitesRepository {
       return (response as Site) || null;
     }
 
-    async create(site: Site): Promise<Site> {
+    async create(site: Site, req): Promise<Site> {
+      var token = req.rawHeaders[1].slice(7);
+      var decoded = this.JwtService.decode(token);
+      var sub = decoded.sub;
+      var sites = {
+        url:site[0].url,
+        userid:sub
+      }
       const manager = getManager();
-      await manager
-        .createQueryBuilder()
-        .insert()
-        .into('ranking.sites')
-        .values(site)
-        .orIgnore()
-        .execute();
-  
+      await manager.query(
+        `
+        INSERT INTO ranking.sites ("url","userid")
+        VALUES(
+          '${sites.url}',
+          ${sites.userid}
+        );
+        `
+      )
       return site;
     }
 

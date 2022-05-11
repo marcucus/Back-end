@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, ForbiddenException, HttpCode } from '@nestjs/common';
 import { KeywordsService } from '../services/keywords.service';
 import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
@@ -11,36 +11,42 @@ export class KeywordsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('create')
+  @HttpCode(200)
   create(@Body() createKeywordDto: CreateKeywordDto) {
     return this.keywordsService.create(createKeywordDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('all')
+  @HttpCode(200)
   findAll() {
     return this.keywordsService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @HttpCode(200)
   findOne(@Param('id') id: string) {
     return this.keywordsService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put('update/:id')
+  @HttpCode(200)
   update(@Param('id') id: string, @Body() updateKeywordDto: UpdateKeywordDto) {
     return this.keywordsService.update(id, updateKeywordDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put('check/:id')
+  @HttpCode(200)
   check(@Param('id') id: string) {
     return this.keywordsService.check(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete('delete/:id')
+  @HttpCode(200)
   remove(@Param('id') id: string) {
     return this.keywordsService.remove(id);
   }

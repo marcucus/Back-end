@@ -7,20 +7,24 @@ import {
   Delete,
   Put,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { SitesService } from '../services/sites.service';
 import { CreateSiteDto } from '../dto/sites/create-site.dto';
 import { UpdateSiteDto } from '../dto/sites/update-site.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { AuthGuard, PassportModule } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('sites')
 export class SitesController {
   constructor(private readonly sitesService: SitesService) {}
-
+  jwtService:JwtService;
+  
   @UseGuards(JwtAuthGuard)
   @Post('create')
-  create(@Body() createSiteDto: CreateSiteDto) {
-    return this.sitesService.create(createSiteDto);
+  create(@Body() createSiteDto: CreateSiteDto, @Req() req) {
+    return this.sitesService.create(createSiteDto,req);
   }
 
   @UseGuards(JwtAuthGuard)

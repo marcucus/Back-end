@@ -33,8 +33,8 @@ export class UsersService {
     }
 
     async getBearerToken(id: string, email:string) {
-        const payload = { sub: id, email: email }
-        return this.jwtService.sign(payload)
+        const payload = { sub: id, email: email };
+        return this.jwtService.sign(payload);
     }
 
     async isUserExists(createUserDto: CreateUserDto): Promise<any> {

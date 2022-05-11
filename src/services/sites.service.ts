@@ -9,8 +9,8 @@ export class SitesService {
     private sitesRepository: SitesRepository,
   ) {}
 
-  create(createSiteDto: CreateSiteDto) {
-    return this.sitesRepository.create(createSiteDto);
+  create(createSiteDto: CreateSiteDto,req) {
+    return this.sitesRepository.create(createSiteDto,req);
   }
 
   findAll() {
