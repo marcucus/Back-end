@@ -3,12 +3,9 @@ import { getManager } from 'typeorm';
 import { Keyword } from 'src/entities/keyword.entity';
 import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
-import { REQUEST } from '@nestjs/core';
 import { HttpService } from '@nestjs/axios';
-import { XMLHttpRequest } from 'xhr2';
 import 'cross-fetch/polyfill';
-import https from 'https';
-import { json, request, Request } from 'express';
+
 
 export class KeywordsRepository implements IKeywordsRepository {
   private puppeteer = require('puppeteer');
@@ -122,10 +119,19 @@ export class KeywordsRepository implements IKeywordsRepository {
           {
             url = "www."+urltest;
           }
+          else{
+            url = urltest;
+          }
         let position = lastPosition[0].position;
         const updatedPost = await this.checkPage(infos,url);
         if(position == undefined || position == null){
-          console.log("Error");
+          await manager.query(
+            `
+              UPDATE ranking.keywords 
+              SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
+              WHERE id = '${id}'
+            `
+            );
         }
         else 
         {
@@ -195,22 +201,22 @@ export class KeywordsRepository implements IKeywordsRepository {
         `
       );
       if(nbRequest[0].number<=199){
-      const response = await manager.query(
-        `
-          UPDATE ranking.request
-          SET number=number+1
-        `
-        );
+        const response = await manager.query(
+          `
+            UPDATE ranking.request
+            SET number=number+1
+          `
+          );
         return response;
       }
       else {
         this.resetProxy();
-        const response = await manager.query(
-          `
-            UPDATE ranking.request
-            SET number=0
-          `
-          );
+          const response = await manager.query(
+            `
+              UPDATE ranking.request
+              SET number=0
+            `
+            );
           return response;
       }
 
@@ -218,19 +224,19 @@ export class KeywordsRepository implements IKeywordsRepository {
 
     async resetProxy(){
       const manager = getManager();
-      const nbprox = manager.query(
-        `
-          SELECT proxy
-          FROM ranking.request
-        `
-      );
+        const nbprox = manager.query(
+          `
+            SELECT proxy
+            FROM ranking.request
+          `
+          );
       if(nbprox[0].proxy <= 9)
       {
         await manager.query(
-        `
-          UPDATE ranking.request
-          SET proxy=proxy+1
-        `
+          `
+            UPDATE ranking.request
+            SET proxy=proxy+1
+          `
         );
       }
       else{
@@ -240,34 +246,8 @@ export class KeywordsRepository implements IKeywordsRepository {
             UPDATE ranking.request
             SET proxy=0
           `
-          );
+        );
       }
-
-        
-      
-      /*test.fetch('https://proxy.webshare.io/api/proxy/list/',{method:'GET',headers},(response) => {
-        var result='';
-          response.on('data', function (chunk) {
-            result += chunk;
-        });
-          response.on('end', function () {
-            console.log(JSON.stringify(result));
-        });
-      }).then((res) => {
-        console.log(res.data);
-        return res.data;
-  });; 
-      //request.get("https://proxy.webshare.io/api/profile/")
-      //request.header("authorization : d108471eaedd8a803c3cbc15e2516704608f942c")      
-      //request.get("authorization", "d108471eaedd8a803c3cbc15e2516704608f942c");
-      //requests.send(new Blob());
-      /*var extractedElements:any;
-      request("http://proxy.webshare.io/proxy/list/download/rmueexqjeanrzdnxljjrgmihikdhzvysbvhauxoo/-/http/username/direct/", el =>extractedElements);
-      const items = [];
-      for (let element of extractedElements) {
-        items.push(element.textContent);
-      }*/
-      //console.log(request);
     }
 
     async resetProxyList(){
@@ -293,7 +273,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       var headers: HeadersInit = {Authorization : "d108471eaedd8a803c3cbc15e2516704608f942c"};
       const response = await fetch("https://proxy.webshare.io/api/proxy/list/", {method:"GET", headers:headers});
       const data = await response.json();
-
+      
       return data.results[nb];
     }
 
