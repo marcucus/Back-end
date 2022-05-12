@@ -21,7 +21,9 @@ export class AuthService {
       this.oauthClient = new google.auth.OAuth2(clientId, clientSecret);
     }
 
-    async googleLogin(req) {
+    async googleLogin(createUserDto,req) {
+      console.log(req.user);
+      console.log(createUserDto);
       if (!req.user){
         return 'No user from google'
       }
