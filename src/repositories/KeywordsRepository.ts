@@ -5,6 +5,7 @@ import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
 import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
 import { HttpService } from '@nestjs/axios';
 import 'cross-fetch/polyfill';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
 
 export class KeywordsRepository implements IKeywordsRepository {
@@ -149,7 +150,18 @@ export class KeywordsRepository implements IKeywordsRepository {
     async checkPage(infos, url)
     {
       var info = await this.infoProxy();
+      var ulrs = require('url');
       let nb=0;
+      var proxyOpts = ulrs.parse(`${info.proxy_address}:${info.ports.http}`);
+      proxyOpts.auth = `'${info.username}:${info.password}'`;
+      const proxyAgent = new HttpsProxyAgent(proxyOpts);
+      const response = await fetch(`https://www.whole-search.com/Google/fr-fr/index.asp?keyword=${infos[0].keywords}&domain=${url}&${infos[0].country}=1`,
+      {headers:{
+          Referer:'https://www.whole-search.com/',
+          Agent:`${proxyAgent}`
+        }
+      });
+      console.log(response);
       const browser = await this.puppeteer.launch({
         args: [ 
                 `--proxy-server=${info.proxy_address}:${info.ports.http}`
