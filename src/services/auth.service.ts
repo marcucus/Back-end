@@ -5,6 +5,7 @@ import { User } from 'src/entities/user.entity';
 import { JwtAuthService } from './jwt.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,30 @@ export class AuthService {
       this.oauthClient = new google.auth.OAuth2(clientId, clientSecret);
     }
 
-    async googleLogin(req) {
+    /*async auth(token, req){
+      var url=`https://oauth2.googleapis.com/tokeninfo?id_token=${token.token}`;
+      var resultats = await axios.get(url);
+
+      req.user = {
+        email : resultats.data.email,
+        firstName : resultats.data.given_name,
+        lastName : resultats.data.family_name,
+        picture : resultats.data.picture
+      };
+      console.log(token);
+      return this.googleLogin(req);
+    }*/
+
+    async googleLogin(token, req) {
+      var url=`https://oauth2.googleapis.com/tokeninfo?id_token=${token.token}`;
+      var resultats = await axios.get(url);
+
+      req.user = {
+        email : resultats.data.email,
+        firstName : resultats.data.given_name,
+        lastName : resultats.data.family_name,
+        picture : resultats.data.picture
+      };
       if (!req.user){
         return 'No user from google'
       }
@@ -47,5 +71,4 @@ export class AuthService {
       return token;
       }
     }
-
 }
