@@ -10,7 +10,6 @@ import { parse } from 'node-html-parser';
 
 
 export class KeywordsRepository implements IKeywordsRepository {
-  private puppeteer = require('puppeteer');
   private http:HttpService;
     async findOne(id: string): Promise<Keyword| null> {
       const manager = getManager();
@@ -194,45 +193,6 @@ export class KeywordsRepository implements IKeywordsRepository {
         if(error) throw new Error(error)
       });
       let moyenne = await this.parseHTML(html);
-      /*const browser = await this.puppeteer.launch({
-        args: [ 
-                `--proxy-server=${info.proxy_address}:${info.ports.http}`
-              ]
-      });
-
-      const page = await browser.newPage();
-      await page.authenticate({
-        username:`${info.username}`,
-        password:`${info.password}`,
-      })
-
-      await page.setDefaultNavigationTimeout(0);
-      await page.goto(`https://www.whole-search.com/c/`);
-      await page.type('#keyword', `${infos[0].keywords}`);
-      await page.type('#domain', `${url}`);
-      await page.click(`#${infos[0].country}`);
-
-      page.waitForSelector('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
-      await page.click('#js_button_go.p-nowrap.btn.btn-block.btn-primary');
-      await page.waitForSelector('.table');
-
-      function extractItems() {
-        const extractedElements = document.querySelectorAll('p.p-nowrap');
-        const items = [];
-        for (let element of extractedElements) {
-          items.push(element.textContent);
-        }
-        return items;
-      }
-      
-      let items = await page.evaluate(extractItems);
-
-        for(let i=0; i<items.length; i++){
-          nb += parseInt(items[i]); 
-        }
-
-      let moyenne = nb/items.length;
-      await page.close();*/
       return moyenne;
     }
 
