@@ -6,6 +6,7 @@ import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
 import { HttpService } from '@nestjs/axios';
 import 'cross-fetch/polyfill';
 import { HttpsProxyAgent } from 'https-proxy-agent';
+import { parse } from 'node-html-parser';
 
 
 export class KeywordsRepository implements IKeywordsRepository {
@@ -136,7 +137,6 @@ export class KeywordsRepository implements IKeywordsRepository {
         }
         else 
         {
-          await this.upCreatePos(id,position);
           await manager.query(
             `
               UPDATE ranking.keywords 
@@ -144,7 +144,31 @@ export class KeywordsRepository implements IKeywordsRepository {
               WHERE id = '${id}'
             `
             );
+          await this.upCreatePos(id,position);
         }
+    }
+
+    async parseHTML(html){
+      let nb=0;
+
+      const root = parse(html);
+      function extractItems() {
+        const extractedElements = root.querySelectorAll('p.p-nowrap');
+        const items = [];
+        for (let element of extractedElements) {
+          items.push(element.textContent);
+        }
+        return items;
+      }
+      
+      let items = extractItems();
+
+        for(let i=0; i<items.length; i++){
+          nb += parseInt(items[i]); 
+        }
+
+        let moyenne = nb/items.length;
+        return moyenne;
     }
 
     async checkPage(infos, url)
@@ -152,17 +176,25 @@ export class KeywordsRepository implements IKeywordsRepository {
       var info = await this.infoProxy();
       var ulrs = require('url');
       let nb=0;
+      var html:string;
       var proxyOpts = ulrs.parse(`${info.proxy_address}:${info.ports.http}`);
       proxyOpts.auth = `'${info.username}:${info.password}'`;
       const proxyAgent = new HttpsProxyAgent(proxyOpts);
       const response = await fetch(`https://www.whole-search.com/Google/fr-fr/index.asp?keyword=${infos[0].keywords}&domain=${url}&${infos[0].country}=1`,
       {headers:{
+          'Accept':'application/json,application/xhtml+xml,application/html',
+          'Content-Type': 'application/json',
           Referer:'https://www.whole-search.com/',
           Agent:`${proxyAgent}`
         }
+      })
+      .then(result => result.text())
+      .then(data => html = data)
+      .catch(function(error){
+        if(error) throw new Error(error)
       });
-      console.log(response);
-      const browser = await this.puppeteer.launch({
+      let moyenne = await this.parseHTML(html);
+      /*const browser = await this.puppeteer.launch({
         args: [ 
                 `--proxy-server=${info.proxy_address}:${info.ports.http}`
               ]
@@ -200,7 +232,7 @@ export class KeywordsRepository implements IKeywordsRepository {
         }
 
       let moyenne = nb/items.length;
-      await page.close();
+      await page.close();*/
       return moyenne;
     }
 

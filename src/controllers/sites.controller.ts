@@ -34,6 +34,12 @@ export class SitesController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('allbyuser')
+  findAllByUser(@Req() req) {
+    return this.sitesService.findAllByUser(req);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.sitesService.findOne(id);

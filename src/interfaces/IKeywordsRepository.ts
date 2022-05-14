@@ -10,6 +10,6 @@ export interface IKeywordsRepository {
     resetProxy(): Promise<void>;
     resetProxyList(): Promise<void>;
     addRequest(): Promise<any>;
-    checkPage(infos, url): Promise<number>;
+
     checkPos(id: string): Promise<void>
   }

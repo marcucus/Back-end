@@ -17,6 +17,10 @@ export class SitesService {
     return this.sitesRepository.find();
   }
 
+  findAllByUser(req) {
+    return this.sitesRepository.findAllbyUser(req);
+  }
+
   findOne(id: string) {
     return this.sitesRepository.findOne(id);
   }
