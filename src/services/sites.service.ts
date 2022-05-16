@@ -17,8 +17,8 @@ export class SitesService {
     return this.sitesRepository.find();
   }
 
-  findAllByUser(req) {
-    return this.sitesRepository.findAllbyUser(req);
+  findAllByUser(token,req) {
+    return this.sitesRepository.findAllbyUser(token,req);
   }
 
   findOne(id: string) {

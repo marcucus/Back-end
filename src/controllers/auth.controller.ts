@@ -3,6 +3,7 @@ import { AuthService } from '../services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateUserDto } from 'src/dto/users/create-user.dto';
+import { JwtAuthService } from 'src/services/jwt.service';
 
 @Controller('authentication')
 export class AuthController {
@@ -13,11 +14,10 @@ export class AuthController {
   async googleAuth(@Req() req) { }
 
 
-  /*@Get('google/callback')
+  @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
-    return this.authService.googleLogin(req);
-  }*/
+  }
 
   
   @Post('auth')

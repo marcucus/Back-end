@@ -36,6 +36,7 @@ export class AuthService {
       return this.googleLogin(req);
     }*/
 
+
     async googleLogin(token, req) {
       var url=`https://oauth2.googleapis.com/tokeninfo?id_token=${token.token}`;
       var resultats = await axios.get(url);
@@ -68,6 +69,7 @@ export class AuthService {
         const payload:JwtPayload = { sub: loggUser.id, email: loggUser.email };
         const info =  this.JwtService.sign(payload);
         const token = await this.userService.getBearerToken(id,email);
+        console.log(token);
       return token;
       }
     }
