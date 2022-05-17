@@ -37,15 +37,17 @@ export class SitesRepository implements ISitesRepository {
     }
 
     async findAllbyUser(token,req){
-      var i = 0;
-      while(req.rawHeaders[i].startsWith('Bearer')){
-        i++;
-
+      for(let i=0;i==req.rawHeaders.length;i++){
+        var getHeaders:string = req.rawHeaders[i];
+        console.log(getHeaders);
+        if(getHeaders.includes('token')){
+          var d = req.rawHeaders[i].slice(7); 
+        }
       }
       console.log(token);
-      console.log(req.rawHeaders[i]);
-      var d = req.rawHeaders[9].slice(7);
-      var decoded = this.JwtService.decode(d);
+      console.log(d);
+      var decoded = this.JwtService.decode(token.token);
+      console.log(decoded);
       var id = decoded.sub;
       var sites = {
         id:id
