@@ -34,9 +34,9 @@ export class SitesController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('allbyuser')
-  findAllByUser(@Body() token, @Req() req) {
-    return this.sitesService.findAllByUser(token,req);
+  @Get('allbyuser')
+  findAllByUser(@Req() req) {
+    return this.sitesService.findAllByUser(req);
   }
 
   @UseGuards(JwtAuthGuard)

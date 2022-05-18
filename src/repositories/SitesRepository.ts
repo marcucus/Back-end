@@ -36,18 +36,17 @@ export class SitesRepository implements ISitesRepository {
       return (response as Site) || null;
     }
 
-    async findAllbyUser(token,req){
-      for(let i=0;i==req.rawHeaders.length;i++){
-        var getHeaders:string = req.rawHeaders[i];
-        console.log(getHeaders);
-        if(getHeaders.includes('token')){
-          var d = req.rawHeaders[i].slice(7); 
+    async findAllbyUser(req){
+      let i = 0;
+      while(i<req.rawHeaders.length){
+        if(req.rawHeaders[i].startsWith('Bearer')){
+          var getHeaders:string = req.rawHeaders[i];
+          var d = getHeaders.slice(7); 
         }
+        i++
       }
-      console.log(token);
+      var decoded = this.JwtService.decode(d);
       console.log(d);
-      var decoded = this.JwtService.decode(token.token);
-      console.log(decoded);
       var id = decoded.sub;
       var sites = {
         id:id
@@ -66,8 +65,15 @@ export class SitesRepository implements ISitesRepository {
     }
 
     async create(site: Site, req): Promise<Site> {
-      var token = req.rawHeaders[1].slice(7);
-      var decoded = this.JwtService.decode(token);
+      let i = 0;
+      while(i<req.rawHeaders.length){
+        if(req.rawHeaders[i].startsWith('Bearer')){
+          var getHeaders:string = req.rawHeaders[i];
+          var d = getHeaders.slice(7); 
+        }
+        i++
+      }
+      var decoded = this.JwtService.decode(d);
       var sub = decoded.sub;
       var sites = {
         url:site[0].url,
