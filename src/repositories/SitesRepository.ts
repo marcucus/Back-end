@@ -36,32 +36,9 @@ export class SitesRepository implements ISitesRepository {
       return (response as Site) || null;
     }
 
-    async findAllbyUser(req){
-      let i = 0;
-      while(i<req.rawHeaders.length){
-        if(req.rawHeaders[i].startsWith('Bearer')){
-          var getHeaders:string = req.rawHeaders[i];
-          var d = getHeaders.slice(7); 
-        }
-        i++
-      }
-      var decoded = this.JwtService.decode(d);
-      console.log(d);
-      var id = decoded.sub;
-      var sites = {
-        id:id
-      }
-      console.log(id);
-      const manager = getManager();
-      const response = await manager.query(
-        `
-          SELECT *
-          FROM ranking.sites
-          WHERE userid = ${sites.id}
-        `,
-      );
-  
-      return response;
+    async findAllbyUser(token,req){
+      console.log(token);
+      
     }
 
     async create(site: Site, req): Promise<Site> {
