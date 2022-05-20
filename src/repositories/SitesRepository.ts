@@ -38,7 +38,22 @@ export class SitesRepository implements ISitesRepository {
 
     async findAllbyUser(token,req){
       console.log(token);
-      
+      var decoded = this.JwtService.decode(token.token);
+      var id = decoded.sub;
+      var sites = {
+        id:id
+      }
+      console.log(id);
+      const manager = getManager();
+      const response = await manager.query(
+        `
+          SELECT *
+          FROM ranking.sites
+          WHERE userid = ${sites.id}
+        `,
+      );
+      console.log(response);
+      return response;
     }
 
     async create(site: Site, req): Promise<Site> {
