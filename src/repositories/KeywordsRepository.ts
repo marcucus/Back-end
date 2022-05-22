@@ -39,6 +39,22 @@ export class KeywordsRepository implements IKeywordsRepository {
       return (response as Keyword) || null;
     }
 
+    async findAllbySite(id){
+      console.log(id);
+      const manager = getManager();
+      const response = await manager.query(
+        `
+        select * from ranking.keywords k
+        inner join ranking.positions p on k.id = p.keywordid 
+        where k.id=${id}
+        order by p."date" desc
+        `,
+      );
+      console.log(response);
+      return response;
+    }
+
+
     async create(keyword: CreateKeywordDto): Promise<Keyword> {
       const manager = getManager();
       const relatedKeyword = keyword.keywords.replace(/\s/g,"+")

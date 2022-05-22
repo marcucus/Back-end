@@ -31,6 +31,13 @@ export class KeywordsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('allbysite/:id')
+  @HttpCode(200)
+  findAllbySite(@Param('id') id: string) {
+    return this.keywordsService.findAllbySite(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Put('update/:id')
   @HttpCode(200)
   update(@Param('id') id: string, @Body() updateKeywordDto: UpdateKeywordDto) {

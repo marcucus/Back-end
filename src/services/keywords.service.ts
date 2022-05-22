@@ -15,6 +15,10 @@ export class KeywordsService {
   findAll() {
     return this.keywordsRepository.find();
   }
+  
+  findAllbySite(id){
+    return this.keywordsRepository.findAllbySite(id)
+  }
 
   findOne(id: string) {
     return this.keywordsRepository.findOne(id);
