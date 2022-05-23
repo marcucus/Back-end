@@ -44,10 +44,15 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-        select * from ranking.keywords k
-        inner join ranking.positions p on k.id = p.keywordid 
-        where k.id=${id}
-        order by p."date" desc
+        select k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,
+        json_build_object('pos', jsonb_agg(json_build_object(  
+          'pid', p.id,
+          'ppos', p.lastposition,
+          'pkid',p.keywordid,
+          'pdate',p."date")))
+        from ranking.keywords k,ranking.positions p
+        where k.siteid=${id}
+        group by k.id
         `,
       );
       console.log(response);
@@ -57,14 +62,14 @@ export class KeywordsRepository implements IKeywordsRepository {
 
     async create(keyword: CreateKeywordDto): Promise<Keyword> {
       const manager = getManager();
-      const relatedKeyword = keyword.keywords.replace(/\s/g,"+")
+      const relatedKeyword = keyword[0].keywords.replace(/\s/g,"+")
       const e = await manager.query(
         `
           INSERT INTO ranking.keywords ("keywords","country","siteid","lastcheck")
           VALUES (
             '${relatedKeyword}',
-            '${keyword.country}',
-            '${keyword.siteid}',
+            '${keyword[0].country}',
+            '${keyword[0].siteid}',
             NOW()::TIMESTAMP
           ) 
           RETURNING ranking.keywords.id;
