@@ -7,5 +7,6 @@ export class CreateKeywordDto {
     country:string;
     url:string;
     lastcheck: Date;
+    createdAt:Date;
     siteid:Site;
 }

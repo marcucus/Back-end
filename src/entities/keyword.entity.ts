@@ -6,5 +6,6 @@ export class Keyword {
     country:string;
     url:string;
     lastcheck: Date;
+    createdAt: Date;
     siteid: Site;
 }

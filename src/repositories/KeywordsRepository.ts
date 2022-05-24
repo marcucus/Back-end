@@ -7,10 +7,15 @@ import { HttpService } from '@nestjs/axios';
 import 'cross-fetch/polyfill';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { parse } from 'node-html-parser';
+import { JwtService } from '@nestjs/jwt';
 
 
 export class KeywordsRepository implements IKeywordsRepository {
   private http:HttpService;
+  private JwtService = new JwtService({
+    secret: process.env.ACCESS_SECRET,
+    signOptions: { expiresIn: '7d' },
+  });
     async findOne(id: string): Promise<Keyword| null> {
       const manager = getManager();
       const response = await manager.query(
@@ -44,32 +49,55 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-        select k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,
+        select k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,s.url,
         json_build_object('pos', jsonb_agg(json_build_object(  
           'pid', p.id,
           'ppos', p.lastposition,
           'pkid',p.keywordid,
           'pdate',p."date")))
-        from ranking.keywords k,ranking.positions p
-        where k.siteid=${id}
-        group by k.id
+        from ranking.keywords k,ranking.positions p,ranking.sites s
+        where s.id=${id} AND k.siteid=${id}
+        group by k.id,s.url
         `,
       );
       console.log(response);
       return response;
     }
 
+    async keywordUser(token){
+      var decoded = this.JwtService.decode(token);
+      var id = decoded.sub;
+      const manager = getManager();
+      const response = await manager.query(
+        `
+        SELECT k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,s.url,
+          json_build_object('pos', jsonb_agg(json_build_object(  
+            'pid', p.id,
+            'ppos', p.lastposition,
+            'pkid',p.keywordid,
+            'pdate',p."date")))
+          FROM ranking.users u
+          INNER JOIN ranking.sites s ON u.id=s.userid 
+          INNER JOIN ranking.keywords k ON s.id=k.siteid 
+          INNER JOIN ranking.positions p ON k.id = p.keywordid
+          WHERE u.id=${id}
+          GROUP BY k.id,s.url
+        `
+      )
+      return response;
+    }
 
     async create(keyword: CreateKeywordDto): Promise<Keyword> {
       const manager = getManager();
       const relatedKeyword = keyword[0].keywords.replace(/\s/g,"+")
       const e = await manager.query(
         `
-          INSERT INTO ranking.keywords ("keywords","country","siteid","lastcheck")
+          INSERT INTO ranking.keywords ("keywords","country","siteid","lastcheck","createdat")
           VALUES (
             '${relatedKeyword}',
             '${keyword[0].country}',
             '${keyword[0].siteid}',
+            NOW()::TIMESTAMP,
             NOW()::TIMESTAMP
           ) 
           RETURNING ranking.keywords.id;

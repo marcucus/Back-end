@@ -38,6 +38,13 @@ export class KeywordsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('keyworduser/:token')
+  @HttpCode(200)
+  keywordUser(@Param('token') token: string) {
+    return this.keywordsService.keywordUser(token);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Put('update/:id')
   @HttpCode(200)
   update(@Param('id') id: string, @Body() updateKeywordDto: UpdateKeywordDto) {

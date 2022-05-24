@@ -12,6 +12,10 @@ export class KeywordsService {
     return this.keywordsRepository.create(createKeywordDto);
   }
 
+  keywordUser(token:string){
+    return this.keywordsRepository.keywordUser(token);
+  }
+
   findAll() {
     return this.keywordsRepository.find();
   }
