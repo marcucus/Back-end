@@ -49,7 +49,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-        select k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,s.url,
+        select distinct on(k.id) k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,s.url,
         json_build_object('pos', jsonb_agg(json_build_object(  
           'pid', p.id,
           'ppos', p.lastposition,
@@ -70,16 +70,13 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-        SELECT k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,s.url,
-          json_build_object('pos', jsonb_agg(json_build_object(  
-            'pid', p.id,
-            'ppos', p.lastposition,
-            'pkid',p.keywordid,
-            'pdate',p."date")))
-          FROM ranking.users u
-          INNER JOIN ranking.sites s ON u.id=s.userid 
-          INNER JOIN ranking.keywords k ON s.id=k.siteid 
-          INNER JOIN ranking.positions p ON k.id = p.keywordid
+          SELECT distinct on(k.id) k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,s.url,
+            json_build_object('pos', jsonb_agg(json_build_object(  
+              'pid', p.id,
+              'ppos', p.lastposition,
+              'pkid',p.keywordid,
+              'pdate',p."date")))
+          FROM ranking.users u,ranking.sites s,ranking.keywords k,ranking.positions p
           WHERE u.id=${id}
           GROUP BY k.id,s.url
         `

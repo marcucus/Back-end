@@ -11,6 +11,7 @@ export class CreateKeywordTable1650635848205 implements MigrationInterface {
                   country character varying,
                   siteId int4 NOT NULL,
                   "lastcheck" timestamp,
+                  "createdat" timestamp,
                   FOREIGN KEY (siteId) REFERENCES ranking.sites(id) ON DELETE CASCADE
               );
             `,
