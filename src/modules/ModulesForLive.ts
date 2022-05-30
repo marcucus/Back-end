@@ -8,6 +8,7 @@ import { GoogleStrategy } from "../auth/strategies/google.strategy";
 import { ConfigModule } from "@nestjs/config";
 import { AppController } from "../app.controller";
 import { AppService } from "../app.service";
+import { ScheduleModule } from "@nestjs/schedule";
 
 export const passportModule = PassportModule.register({ defaultStrategy: 'jwt' });
 
@@ -24,6 +25,7 @@ export class ModulesForLive {
               signOptions: { expiresIn: '7d' },
             }),
             AuthModule,
+            ScheduleModule.forRoot()
 
         ],
         providers: [

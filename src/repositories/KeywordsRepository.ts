@@ -8,6 +8,7 @@ import 'cross-fetch/polyfill';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { parse } from 'node-html-parser';
 import { JwtService } from '@nestjs/jwt';
+import 'node-cron';
 
 
 export class KeywordsRepository implements IKeywordsRepository {
@@ -129,6 +130,18 @@ export class KeywordsRepository implements IKeywordsRepository {
         .where("id = :id", { id: id })
         .execute();
         return response;
+    }
+
+    async checkAuto(){
+      const manager = getManager();
+      const response = await manager.query(
+        `
+          select k.id
+          from ranking.keywords k 
+          where k.lastcheck <= NOW() - INTERVAL '24 HOURS'
+        `
+      );
+      console.log(response[0],response[1],response[2]);
     }
 
     async checkPos(id: string){

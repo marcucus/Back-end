@@ -4,10 +4,16 @@ import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CheckKeywordDto } from 'src/dto/keywords/check-keyword.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Controller('keywords')
 export class KeywordsController {
   constructor(private readonly keywordsService: KeywordsService) {}
+
+  @Cron('0 0 */12 * * *')
+  checkAuto(){
+    return this.keywordsService.checkAuto();
+  }
 
   @UseGuards(JwtAuthGuard)
   @Post('create')

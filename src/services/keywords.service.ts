@@ -36,6 +36,10 @@ export class KeywordsService {
     return this.keywordsRepository.checkPos(id);
   }
 
+  checkAuto(){
+    return this.keywordsRepository.checkAuto();
+  }
+
   remove(id: string) {
     return this.keywordsRepository.delete(id);
   }
