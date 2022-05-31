@@ -32,6 +32,20 @@ export class KeywordsRepository implements IKeywordsRepository {
       return (response[0] as Keyword) || null;
     }
 
+    async infoSiteByKeyword(id: string){
+      const manager = getManager();
+      const response = await manager.query(
+        `
+          SELECT *
+          FROM ranking.keywords k
+          INNER JOIN ranking.sites s on k.siteid = s.id
+          WHERE k.id = ${id}
+        `,
+      );
+  
+      return response;
+    }
+
     async find(): Promise<Keyword| null> {
       const manager = getManager();
       const response = await manager.query(
@@ -90,13 +104,14 @@ export class KeywordsRepository implements IKeywordsRepository {
       const relatedKeyword = keyword[0].keywords.replace(/\s/g,"+")
       const e = await manager.query(
         `
-          INSERT INTO ranking.keywords ("keywords","country","siteid","lastcheck","createdat")
+          INSERT INTO ranking.keywords ("keywords","country","siteid","lastcheck","createdat","search")
           VALUES (
             '${relatedKeyword}',
             '${keyword[0].country}',
             '${keyword[0].siteid}',
             NOW()::TIMESTAMP,
-            NOW()::TIMESTAMP
+            NOW()::TIMESTAMP,
+            '${keyword[0].search}'
           ) 
           RETURNING ranking.keywords.id;
         `
@@ -141,7 +156,10 @@ export class KeywordsRepository implements IKeywordsRepository {
           where k.lastcheck <= NOW() - INTERVAL '24 HOURS'
         `
       );
-      console.log(response[0],response[1],response[2]);
+      for(var i=0; i < response.length; i++){
+        this.checkPos(response[i].id);
+      }
+      
     }
 
     async checkPos(id: string){
@@ -158,7 +176,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       );
         const infos = await manager.query(
           `
-            SELECT ranking.keywords.keywords, ranking.keywords.country, ranking.sites.url
+            SELECT ranking.keywords.keywords, ranking.keywords.country,ranking.keywords.search, ranking.sites.url
             FROM ranking.keywords
             INNER JOIN ranking.sites ON ranking.keywords.siteid = ranking.sites.id 
             WHERE ranking.keywords.id = '${id}'
@@ -184,25 +202,28 @@ export class KeywordsRepository implements IKeywordsRepository {
           }
         let position = lastPosition[0].position;
         const updatedPost = await this.checkPage(infos,url);
-        if(position == undefined || position == null){
-          await manager.query(
-            `
-              UPDATE ranking.keywords 
-              SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
-              WHERE id = '${id}'
-            `
-            );
-        }
-        else 
-        {
-          await manager.query(
-            `
-              UPDATE ranking.keywords 
-              SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
-              WHERE id = '${id}'
-            `
-            );
-          await this.upCreatePos(id,position);
+        console.log(updatedPost);
+        if(updatedPost !== NaN){  
+          if(position == undefined || position == null){
+            await manager.query(
+              `
+                UPDATE ranking.keywords 
+                SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
+                WHERE id = '${id}'
+              `
+              );
+          }
+          else 
+          {
+            await manager.query(
+              `
+                UPDATE ranking.keywords 
+                SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
+                WHERE id = '${id}'
+              `
+              );
+            await this.upCreatePos(id,position);
+          }
         }
     }
 
@@ -238,7 +259,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       var proxyOpts = ulrs.parse(`${info.proxy_address}:${info.ports.http}`);
       proxyOpts.auth = `'${info.username}:${info.password}'`;
       const proxyAgent = new HttpsProxyAgent(proxyOpts);
-      const response = await fetch(`https://www.whole-search.com/Google/fr-fr/index.asp?keyword=${infos[0].keywords}&domain=${url}&${infos[0].country}=1`,
+      const response = await fetch(`https://www.whole-search.com/${infos[0].search}/fr-fr/index.asp?keyword=${infos[0].keywords}&domain=${url}&${infos[0].country}=1`,
       {headers:{
           'Accept':'application/json,application/xhtml+xml,application/html',
           'Content-Type': 'application/json',

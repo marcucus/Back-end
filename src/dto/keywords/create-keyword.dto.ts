@@ -8,5 +8,6 @@ export class CreateKeywordDto {
     url:string;
     lastcheck: Date;
     createdAt:Date;
+    search:string;
     siteid:Site;
 }

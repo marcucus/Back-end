@@ -28,6 +28,10 @@ export class KeywordsService {
     return this.keywordsRepository.findOne(id);
   }
 
+  infoSiteByKeyword(id:string){
+    return this.keywordsRepository.infoSiteByKeyword(id);
+  }
+
   update(id: string, updateKeywordDto: UpdateKeywordDto) {
     return this.keywordsRepository.update(id,updateKeywordDto);
   }

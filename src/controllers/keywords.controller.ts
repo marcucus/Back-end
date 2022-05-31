@@ -51,6 +51,13 @@ export class KeywordsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('keywordsite/:id')
+  @HttpCode(200)
+  infoSiteByKeyword(@Param('id') id: string) {
+    return this.keywordsService.infoSiteByKeyword(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Put('update/:id')
   @HttpCode(200)
   update(@Param('id') id: string, @Body() updateKeywordDto: UpdateKeywordDto) {

@@ -8,4 +8,5 @@ export class Keyword {
     lastcheck: Date;
     createdAt: Date;
     siteid: Site;
+    search:string;
 }

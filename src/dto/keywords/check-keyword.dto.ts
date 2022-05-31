@@ -5,5 +5,6 @@ export class CheckKeywordDto {
     lastcheck: Date;
     lastposition: string;
     date:Date;
+    search:string;
     keywordid:Keyword;
 }
