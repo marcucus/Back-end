@@ -79,6 +79,27 @@ export class KeywordsRepository implements IKeywordsRepository {
       return response;
     }
 
+    async getPos(id){
+      console.log(id)
+      const manager = getManager();
+      const response = await manager.query(
+        `
+        SELECT distinct on(k.id) k.id,
+        json_build_object('pos', jsonb_agg(json_build_object(  
+          'pid', p.id,
+          'ppos', p.lastposition,
+          'pkid',p.keywordid,
+          'pdate',p."date")))
+        FROM ranking.keywords k
+        inner join ranking.positions p on k.id = p.keywordid
+        WHERE p.keywordid=${id}
+        GROUP BY k.id
+        `
+      )
+      console.log(response)
+      return response;
+    }
+
     async keywordUser(token){
       var decoded = this.JwtService.decode(token);
       var id = decoded.sub;

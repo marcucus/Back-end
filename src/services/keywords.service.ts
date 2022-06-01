@@ -32,6 +32,10 @@ export class KeywordsService {
     return this.keywordsRepository.infoSiteByKeyword(id);
   }
 
+  getPos(id){
+    return this.keywordsRepository.getPos(id);
+  }
+
   update(id: string, updateKeywordDto: UpdateKeywordDto) {
     return this.keywordsRepository.update(id,updateKeywordDto);
   }

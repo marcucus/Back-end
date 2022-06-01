@@ -44,6 +44,13 @@ export class KeywordsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('getPos/:id')
+  @HttpCode(200)
+  getPos(@Param('id') id: string) {
+    return this.keywordsService.getPos(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('keyworduser/:token')
   @HttpCode(200)
   keywordUser(@Param('token') token: string) {
