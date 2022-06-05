@@ -106,15 +106,18 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-          SELECT distinct on(k.id) k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,s.url,
+          select distinct on(k.id) k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,s.url,
             json_build_object('pos', jsonb_agg(json_build_object(  
               'pid', p.id,
               'ppos', p.lastposition,
               'pkid',p.keywordid,
               'pdate',p."date")))
-          FROM ranking.users u,ranking.sites s,ranking.keywords k,ranking.positions p
-          WHERE u.id=${id}
-          GROUP BY k.id,s.url
+          from ranking.users u
+          inner join ranking.sites s on u.id = s.userid 
+          inner join ranking.keywords k on s.id = k.siteid 
+          inner join ranking.positions p on k.id = p.keywordid
+          where u.id=${id}
+          group by k.id,s.url
         `
       )
       return response;
@@ -233,6 +236,7 @@ export class KeywordsRepository implements IKeywordsRepository {
                 WHERE id = '${id}'
               `
               );
+            await this.upCreatePos(id,updatedPost);
           }
           else 
           {
@@ -284,7 +288,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       {headers:{
           'Accept':'application/json,application/xhtml+xml,application/html',
           'Content-Type': 'application/json',
-          Referer:'https://www.whole-search.com/',
+          Referer:`https://www.whole-search.com/${infos[0].search}/fr-fr/index.asp?keyword=${infos[0].keywords}&domain=${url}&${infos[0].country}=1`,
           Agent:`${proxyAgent}`
         }
       })
