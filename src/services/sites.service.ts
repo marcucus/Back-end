@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSiteDto } from '../dto/sites/create-site.dto';
 import { UpdateSiteDto } from '../dto/sites/update-site.dto';
-import { SitesRepository } from 'src/repositories/SitesRepository';
+import { SitesRepository } from '../repositories/SitesRepository';
 
 @Injectable()
 export class SitesService {

@@ -1,4 +1,4 @@
-import { Keyword } from "src/entities/keyword.entity";
+import { Keyword } from "../entities/keyword.entity";
 import { DeleteResult } from "typeorm";
 
 export interface IKeywordsRepository {

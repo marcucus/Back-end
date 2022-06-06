@@ -1,8 +1,8 @@
 import { IKeywordsRepository } from '../interfaces/IKeywordsRepository';
 import { getManager } from 'typeorm';
-import { Keyword } from 'src/entities/keyword.entity';
-import { UpdateKeywordDto } from 'src/dto/keywords/update-keyword.dto';
-import { CreateKeywordDto } from 'src/dto/keywords/create-keyword.dto';
+import { Keyword } from '../entities/keyword.entity';
+import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
+import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { HttpService } from '@nestjs/axios';
 import 'cross-fetch/polyfill';
 import { HttpsProxyAgent } from 'https-proxy-agent';

@@ -1,6 +1,6 @@
 import { IUsersRepository } from '../interfaces/IUsersRepository';
 import { getManager } from 'typeorm';
-import { User } from 'src/entities/user.entity';
+import { User } from '../entities/user.entity';
 
 export class UsersRepository implements IUsersRepository {
     async findOne(id: string): Promise<User| null> {

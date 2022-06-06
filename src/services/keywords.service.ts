@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
-import { KeywordsRepository } from 'src/repositories/KeywordsRepository';
+import { KeywordsRepository } from '../repositories/KeywordsRepository';
 
 @Injectable()
 export class KeywordsService {

@@ -1,4 +1,4 @@
-import { Keyword } from 'src/entities/keyword.entity';
+import { Keyword } from '../../entities/keyword.entity';
 
 export class CheckKeywordDto {
     position: string;

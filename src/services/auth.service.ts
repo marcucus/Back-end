@@ -1,7 +1,7 @@
 import { Injectable} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Auth, google } from 'googleapis';
-import { User } from 'src/entities/user.entity';
+import { User } from '../entities/user.entity';
 import { JwtAuthService } from './jwt.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';

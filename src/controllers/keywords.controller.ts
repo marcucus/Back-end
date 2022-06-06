@@ -2,8 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, Forb
 import { KeywordsService } from '../services/keywords.service';
 import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { CheckKeywordDto } from 'src/dto/keywords/check-keyword.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Cron } from '@nestjs/schedule';
 
 @Controller('keywords')

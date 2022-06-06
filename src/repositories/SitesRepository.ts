@@ -1,7 +1,7 @@
 import { ISitesRepository } from '../interfaces/ISitesRepository';
 import { getManager } from 'typeorm';
-import { Site } from 'src/entities/site.entity';
-import { UpdateSiteDto } from 'src/dto/sites/update-site.dto';
+import { Site } from '../entities/site.entity';
+import { UpdateSiteDto } from '../dto/sites/update-site.dto';
 import { JwtService } from '@nestjs/jwt';
 
 export class SitesRepository implements ISitesRepository {
