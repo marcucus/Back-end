@@ -177,7 +177,36 @@ export class KeywordsRepository implements IKeywordsRepository {
       for(var i=0; i < response.length; i++){
         this.checkPos(response[i].id);
       }
-      
+    }
+
+    async check24(id){
+      const manager = getManager();
+      const response = await manager.query(
+        `
+          select k.id
+          from ranking.keywords k 
+          inner join ranking.site s on k.siteid = s.id
+          where k.lastcheck <= NOW() - INTERVAL '24 HOURS' and s.id=${id}
+        `
+      );
+      for(var i=0; i < response.length; i++){
+        this.checkPos(response[i].id);
+      }
+    }
+
+    async checkForce(id){
+      const manager = getManager();
+      const response = await manager.query(
+        `
+          select k.id
+          from ranking.keywords k 
+          inner join ranking.site s on k.siteid = s.id
+          where s.id=${id}
+        `
+      );
+      for(var i=0; i < response.length; i++){
+        this.checkPos(response[i].id);
+      }
     }
 
     async checkPos(id: string){

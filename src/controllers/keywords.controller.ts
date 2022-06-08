@@ -15,6 +15,13 @@ export class KeywordsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('check24')
+  @HttpCode(200)
+  check24(@Param('id') id: string){
+    return this.keywordsService.check24(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('create')
   @HttpCode(200)
   create(@Body() createKeywordDto: CreateKeywordDto) {

@@ -48,6 +48,10 @@ export class KeywordsService {
     return this.keywordsRepository.checkAuto();
   }
 
+  check24(id:string){
+    return this.keywordsRepository.check24(id);
+  }
+
   remove(id: string) {
     return this.keywordsRepository.delete(id);
   }
