@@ -15,10 +15,31 @@ export class KeywordsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('check24')
+  @Post('check24/:id')
   @HttpCode(200)
   check24(@Param('id') id: string){
     return this.keywordsService.check24(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('checkUser/:token')
+  @HttpCode(200)
+  checkUser(@Param('token') token:string){
+    return this.keywordsService.checkUser(token);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('checkForceUser/:token')
+  @HttpCode(200)
+  checkForceUser(@Param('token') token:string){
+    return this.keywordsService.checkForceUser(token);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('checkForce/:id')
+  @HttpCode(200)
+  checkForce(@Param('id') id:string){
+    return this.keywordsService.checkForce(id);
   }
 
   @UseGuards(JwtAuthGuard)

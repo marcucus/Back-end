@@ -13,7 +13,7 @@ import 'node-cron';
 
 export class KeywordsRepository implements IKeywordsRepository {
   private http:HttpService;
-  private JwtService = new JwtService({
+  public JwtService = new JwtService({
     secret: process.env.ACCESS_SECRET,
     signOptions: { expiresIn: '7d' },
   });
@@ -166,7 +166,7 @@ export class KeywordsRepository implements IKeywordsRepository {
         `
           select k.id
           from ranking.keywords k 
-          where k.lastcheck <= NOW() - INTERVAL '24 HOURS'
+          where k.lastcheck < NOW() - INTERVAL '24 HOURS'
         `
       );
       for(var i=0; i < response.length; i++){
@@ -180,8 +180,44 @@ export class KeywordsRepository implements IKeywordsRepository {
         `
           select k.id
           from ranking.keywords k 
-          inner join ranking.site s on k.siteid = s.id
-          where k.lastcheck <= NOW() - INTERVAL '24 HOURS' and s.id=${id}
+          inner join ranking.sites s on k.siteid = s.id
+          where k.lastcheck < NOW() - INTERVAL '24 HOURS' and s.id=${id}
+        `
+      );
+      for(var i=0; i < response.length; i++){
+        this.checkPos(response[i].id);
+      }
+    }
+
+    async checkUser(token){
+      var decoded = this.JwtService.decode(token);
+      var id = decoded.sub;
+      const manager = getManager();
+      const response = await manager.query(
+        `
+        select k.id
+        from ranking.keywords k 
+        inner join ranking.sites s on k.siteid = s.id 
+        inner join ranking.users u on s.userid = u.id 
+        where k.lastcheck < NOW() - INTERVAL '24 HOURS' and u.id=${id}
+        `
+      );
+      for(var i=0; i < response.length; i++){
+        this.checkPos(response[i].id);
+      }
+    }
+
+    async checkForceUser(token){
+      var decoded = this.JwtService.decode(token);
+      var id = decoded.sub;
+      const manager = getManager();
+      const response = await manager.query(
+        `
+        select k.id
+        from ranking.keywords k 
+        inner join ranking.sites s on k.siteid = s.id 
+        inner join ranking.users u on s.userid = u.id 
+        where u.id=${id}
         `
       );
       for(var i=0; i < response.length; i++){
@@ -195,7 +231,7 @@ export class KeywordsRepository implements IKeywordsRepository {
         `
           select k.id
           from ranking.keywords k 
-          inner join ranking.site s on k.siteid = s.id
+          inner join ranking.sites s on k.siteid = s.id
           where s.id=${id}
         `
       );
@@ -205,6 +241,10 @@ export class KeywordsRepository implements IKeywordsRepository {
     }
 
     async checkPos(id: string){
+      if(id==undefined || id==null)
+      {
+        return;
+      }
       await this.addRequest();
       var urltest ='';
       var url ='';
@@ -242,12 +282,13 @@ export class KeywordsRepository implements IKeywordsRepository {
           else{
             url = urltest;
           }
-        let position = lastPosition[0].position;
+        const test = NaN;
         const updatedPost = await this.checkPage(infos,url);
         console.log(updatedPost);
-        if(updatedPost !== NaN){  
-          if(position == undefined || position == null){
-            await manager.query(
+        console.log(updatedPost==test)
+        if(updatedPost !== test){  
+
+            manager.query(
               `
                 UPDATE ranking.keywords 
                 SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
@@ -255,18 +296,9 @@ export class KeywordsRepository implements IKeywordsRepository {
               `
               );
             await this.upCreatePos(id,updatedPost);
-          }
-          else 
-          {
-            await manager.query(
-              `
-                UPDATE ranking.keywords 
-                SET lastcheck = NOW()::TIMESTAMP, position = '${updatedPost}'
-                WHERE id = '${id}'
-              `
-              );
-            await this.upCreatePos(id,position);
-          }
+        }
+        else{
+          return;
         }
     }
 
@@ -327,7 +359,7 @@ export class KeywordsRepository implements IKeywordsRepository {
           FROM ranking.request
         `
       );
-      if(nbRequest[0].number<=199){
+      if(nbRequest[0].number<=50){
         const response = await manager.query(
           `
             UPDATE ranking.request
@@ -367,7 +399,7 @@ export class KeywordsRepository implements IKeywordsRepository {
         );
       }
       else{
-        this.resetProxyList();
+        //this.resetProxyList();
         await manager.query(
           `
             UPDATE ranking.request

@@ -51,4 +51,12 @@ export class UsersService {
         }
         return undefined;
       }
+
+    info(token:string){
+        return this.usersRepository.info(token);
+    }
+
+    delete(id:string){
+        return this.usersRepository.delete(id);
+    }
 }

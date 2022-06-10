@@ -52,6 +52,18 @@ export class KeywordsService {
     return this.keywordsRepository.check24(id);
   }
 
+  checkUser(token:string){
+    return this.keywordsRepository.checkUser(token);
+  }
+
+  checkForceUser(token:string){
+    return this.keywordsRepository.checkForceUser(token);
+  }
+
+  checkForce(id:string){
+    return this.keywordsRepository.checkForce(id);
+  }
+
   remove(id: string) {
     return this.keywordsRepository.delete(id);
   }

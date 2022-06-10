@@ -1,8 +1,14 @@
 import { IUsersRepository } from '../interfaces/IUsersRepository';
 import { getManager } from 'typeorm';
 import { User } from '../entities/user.entity';
+import { KeywordsRepository } from './KeywordsRepository';
+import { JwtService } from '@nestjs/jwt';
 
 export class UsersRepository implements IUsersRepository {
+  public JwtService = new JwtService({
+    secret: process.env.ACCESS_SECRET,
+    signOptions: { expiresIn: '7d' },
+  });
     async findOne(id: string): Promise<User| null> {
       const manager = getManager();
       const response = await manager.query(
@@ -53,5 +59,30 @@ export class UsersRepository implements IUsersRepository {
         .execute();
   
       return user;
+    }
+
+    async info(token:string){
+      var decoded = this.JwtService.decode(token);
+      var id = decoded.sub;
+      const manager = getManager();
+      const response = await manager.query(
+        `
+        SELECT *
+        FROM ranking.users
+        WHERE "id" = '${id}'
+        `
+      );
+      return response
+    }
+
+    async delete(id:string){
+      const manager = getManager();
+      const response = await manager.query(
+        `
+        DELETE FROM ranking.users
+        WHERE "id" =  '${id}'
+        `
+      );
+      return response;
     }
   }
