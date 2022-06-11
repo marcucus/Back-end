@@ -1,7 +1,6 @@
 import { IUsersRepository } from '../interfaces/IUsersRepository';
 import { getManager } from 'typeorm';
 import { User } from '../entities/user.entity';
-import { KeywordsRepository } from './KeywordsRepository';
 import { JwtService } from '@nestjs/jwt';
 
 export class UsersRepository implements IUsersRepository {

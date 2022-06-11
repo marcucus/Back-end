@@ -13,7 +13,6 @@ import { SitesService } from '../services/sites.service';
 import { CreateSiteDto } from '../dto/sites/create-site.dto';
 import { UpdateSiteDto } from '../dto/sites/update-site.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { AuthGuard, PassportModule } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 
 @Controller('sites')

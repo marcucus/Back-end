@@ -284,10 +284,8 @@ export class KeywordsRepository implements IKeywordsRepository {
           }
         const test = NaN;
         const updatedPost = await this.checkPage(infos,url);
-        console.log(updatedPost);
-        console.log(updatedPost==test)
-        if(updatedPost !== test){  
-
+        console.log(isNaN(updatedPost));
+        if(!isNaN(updatedPost)){  
             manager.query(
               `
                 UPDATE ranking.keywords 
@@ -383,12 +381,13 @@ export class KeywordsRepository implements IKeywordsRepository {
 
     async resetProxy(){
       const manager = getManager();
-        const nbprox = manager.query(
+        const nbprox = await manager.query(
           `
             SELECT proxy
             FROM ranking.request
           `
           );
+        console.log(nbprox[0])
       if(nbprox[0].proxy <= 9)
       {
         await manager.query(

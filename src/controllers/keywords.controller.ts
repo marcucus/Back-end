@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards, ForbiddenException, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, HttpCode } from '@nestjs/common';
 import { KeywordsService } from '../services/keywords.service';
 import { CreateKeywordDto } from '../dto/keywords/create-keyword.dto';
 import { UpdateKeywordDto } from '../dto/keywords/update-keyword.dto';
@@ -9,7 +9,7 @@ import { Cron } from '@nestjs/schedule';
 export class KeywordsController {
   constructor(private readonly keywordsService: KeywordsService) {}
 
-  @Cron('0 0 */12 * * *')
+  @Cron('0 0 */1 * * *')
   checkAuto(){
     return this.keywordsService.checkAuto();
   }
