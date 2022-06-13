@@ -117,12 +117,11 @@ export class KeywordsRepository implements IKeywordsRepository {
       const relatedKeyword = keyword[0].keywords.replace(/\s/g,"+")
       const e = await manager.query(
         `
-          INSERT INTO ranking.keywords ("keywords","country","siteid","lastcheck","createdat","search")
+          INSERT INTO ranking.keywords ("keywords","country","siteid","createdat","search")
           VALUES (
             '${relatedKeyword}',
             '${keyword[0].country}',
             '${keyword[0].siteid}',
-            NOW()::TIMESTAMP,
             NOW()::TIMESTAMP,
             '${keyword[0].search}'
           ) 
@@ -166,7 +165,7 @@ export class KeywordsRepository implements IKeywordsRepository {
         `
           select k.id
           from ranking.keywords k 
-          where k.lastcheck < NOW() - INTERVAL '24 HOURS'
+          where (k.lastcheck < NOW() - INTERVAL '24 HOURS' or k."position" = 'NaN' or k.lastcheck is null or k."position" is null) 
         `
       );
       for(var i=0; i < response.length; i++){
@@ -181,7 +180,8 @@ export class KeywordsRepository implements IKeywordsRepository {
           select k.id
           from ranking.keywords k 
           inner join ranking.sites s on k.siteid = s.id
-          where k.lastcheck < NOW() - INTERVAL '24 HOURS' and s.id=${id}
+          where (k.lastcheck < NOW() - INTERVAL '24 HOURS' or k."position" = 'NaN' or k.lastcheck is null or k."position" is null) 
+          and s.id=${id}
         `
       );
       for(var i=0; i < response.length; i++){
@@ -199,7 +199,8 @@ export class KeywordsRepository implements IKeywordsRepository {
         from ranking.keywords k 
         inner join ranking.sites s on k.siteid = s.id 
         inner join ranking.users u on s.userid = u.id 
-        where k.lastcheck < NOW() - INTERVAL '24 HOURS' and u.id=${id}
+        where (k.lastcheck < NOW() - INTERVAL '24 HOURS' or k."position" = 'NaN' or k.lastcheck is null or k."position" is null) 
+        and u.id=${id}
         `
       );
       for(var i=0; i < response.length; i++){
@@ -285,7 +286,8 @@ export class KeywordsRepository implements IKeywordsRepository {
         const test = NaN;
         const updatedPost = await this.checkPage(infos,url);
         console.log(isNaN(updatedPost));
-        if(!isNaN(updatedPost)){  
+        if(!isNaN(updatedPost)){ 
+          console.log(updatedPost) 
             manager.query(
               `
                 UPDATE ranking.keywords 
@@ -296,7 +298,13 @@ export class KeywordsRepository implements IKeywordsRepository {
             await this.upCreatePos(id,updatedPost);
         }
         else{
-          return;
+          manager.query(
+            `
+              UPDATE ranking.keywords 
+              SET position = '${updatedPost}'
+              WHERE id = '${id}'
+            `
+            );;
         }
     }
 
