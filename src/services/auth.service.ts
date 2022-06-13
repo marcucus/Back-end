@@ -2,7 +2,6 @@ import { Injectable} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Auth, google } from 'googleapis';
 import { User } from '../entities/user.entity';
-import { JwtAuthService } from './jwt.service';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from 'jsonwebtoken';
 import axios from 'axios';
@@ -10,7 +9,6 @@ import axios from 'axios';
 @Injectable()
 export class AuthService {
     private oauthClient: Auth.OAuth2Client;
-    private jwtService : JwtAuthService;
     private JwtService = new JwtService({
       secret: process.env.ACCESS_SECRET,
       signOptions: { expiresIn: '7d' },
@@ -21,20 +19,6 @@ export class AuthService {
       const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
       this.oauthClient = new google.auth.OAuth2(clientId, clientSecret);
     }
-
-    /*async auth(token, req){
-      var url=`https://oauth2.googleapis.com/tokeninfo?id_token=${token.token}`;
-      var resultats = await axios.get(url);
-
-      req.user = {
-        email : resultats.data.email,
-        firstName : resultats.data.given_name,
-        lastName : resultats.data.family_name,
-        picture : resultats.data.picture
-      };
-      console.log(token);
-      return this.googleLogin(req);
-    }*/
 
 
     async googleLogin(token, req) {

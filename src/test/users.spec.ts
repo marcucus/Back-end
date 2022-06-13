@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from '../controllers/users.controller';
 import { KeywordsModule } from '../modules/keywords.module';
 import { SitesModule } from '../modules/sites.module';
 import { UsersRepository } from '../repositories/UsersRepository';
+import { UsersController } from '../controllers/users.controller';
 import { UsersService } from '../services/users.service';
 
-describe('UsersService', () => {
+describe('Users', () => {
+  let controller: UsersController;
   let service: UsersService;
 
   beforeEach(async () => {
@@ -16,10 +17,16 @@ describe('UsersService', () => {
       exports:[UsersService, UsersRepository],
     }).compile();
 
+    controller = module.get<UsersController>(UsersController);
     service = module.get<UsersService>(UsersService);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
 });
