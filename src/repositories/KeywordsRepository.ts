@@ -64,7 +64,7 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-        select distinct on(k.id) k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,k.search,s.url
+        select distinct on(k.id) k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,k.search,s.url,age(current_timestamp, k.lastcheck)
         from ranking.keywords k,ranking.positions p,ranking.sites s
         where s.id=${id} AND k.siteid=${id}
         group by k.id,s.url
@@ -101,14 +101,15 @@ export class KeywordsRepository implements IKeywordsRepository {
       const manager = getManager();
       const response = await manager.query(
         `
-          select distinct on(k.id) k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,k.search,s.url
+          select distinct on(k.id) k.id,k."position",k.keywords,k.country,k.siteid,k.lastcheck,k.createdAt,k.search,s.url,age(current_timestamp, k.lastcheck)
           from ranking.users u
           inner join ranking.sites s on u.id = s.userid 
           inner join ranking.keywords k on s.id = k.siteid 
           where u.id=${id}
           group by k.id,s.url
         `
-      )
+      );
+      console.log(response);
       return response;
     }
 
