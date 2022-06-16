@@ -4343,6 +4343,11 @@
   "resolved" "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   "version" "2.6.2"
 
+"nest@^0.1.6":
+  "integrity" "sha512-21378J/6pHB9EZMId5yz9DaxVj778pCHhzfXhRLLrLWZydpLgbsyxL5B5QyTSWJBk5L8XbiGgMvNZMb/qBySYg=="
+  "resolved" "https://registry.npmjs.org/nest/-/nest-0.1.6.tgz"
+  "version" "0.1.6"
+
 "node-cron@^3.0.0":
   "integrity" "sha512-DDwIvvuCwrNiaU7HEivFDULcaQualDv7KoNlB/UU1wPW0n1tDEmBJKhEIE6DlF2FuoOHcNbLJ8ITL2Iv/3AWmA=="
   "resolved" "https://registry.npmjs.org/node-cron/-/node-cron-3.0.0.tgz"
